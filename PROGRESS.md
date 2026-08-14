@@ -204,17 +204,23 @@
 - Added protected `/access` workspace for owner-controlled staff creation, editing, role assignment, disabling, restoration, and role visibility.
 - Protected the owner account from disabling or owner-role removal and audited all access changes.
 - Added access-management and inactive-login tests.
+- Continued production hardening with the accounting foundation.
+- Added configurable system chart-of-accounts records for cash, payment receivables, inventory, tax, payable, revenue, COGS, and customer credit.
+- Added immutable posted journal entries and journal lines with balanced double-entry validation, source-document linkage, and reversal references.
+- Added automatic accounting postings for finalized sales, sale cancellations, sales returns, and purchase receipts.
+- Added protected `/accounting` journal review and journal detail pages with date filters, account activity, debit/credit control totals, and balance checks.
+- Added accounting permissions, owner/manager access assignment, idempotent source posting, and accounting feature tests.
 
 ## Current Phase
 
-Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, and access foundation.
+Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, and accounting foundation.
 
 ## Pending Work
 
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with accounting linkage, statutory exports, or deeper regulated reporting after the controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation is accepted.
+- Continue Phase 10 with statutory GST exports, customer/supplier sub-ledgers, payment reconciliation, stock adjustments, or deeper regulated reporting.
 
 ## Known Issues
 
@@ -322,6 +328,22 @@ Phase 10 access-management verification completed for the Laravel app.
 
 & .\.tools\php-8.3.33\php.exe artisan test
 # Passed: 82 tests, 653 assertions.
+
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
+# Passed.
+
+npm run build
+# Passed; Vite built production assets.
+```
+
+Phase 10 accounting verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; accounting tables, chart-of-accounts records, and access records applied.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 85 tests, 679 assertions.
 
 & .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
 # Passed.

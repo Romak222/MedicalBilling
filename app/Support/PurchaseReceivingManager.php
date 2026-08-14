@@ -119,6 +119,8 @@ class PurchaseReceivingManager
                 'updated_by' => $actor->id,
             ]);
 
+            app(AccountingManager::class)->postPurchaseReceipt($invoice, $actor);
+
             app(AuditLogger::class)->record('purchase_invoice.finalized', $actor, $invoice, $this->auditMetadata($invoice));
 
             return $invoice->refresh()->load(['supplier', 'purchaseOrder', 'items.productBatch', 'items.product']);

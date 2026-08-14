@@ -78,7 +78,7 @@ Status: in progress. Purchase receiving now creates batch records with expiry, M
 - Hold/resume bills
 - Thermal receipt
 
-Status: in progress. Sales invoices, batch selection, barcode/batch quick scan, hold/resume, printable receipt view, payment method/paid/change fields, stock consumption movements, cancellation reversal, sales returns with optional manual restock, linked customer/patient records, and active cash-drawer shift linkage are implemented. Hardware receipt printer configuration and deeper accounting/reporting integration remain pending.
+Status: in progress. Sales invoices, batch selection, barcode/batch quick scan, hold/resume, printable receipt view, payment method/paid/change fields, stock consumption movements, cancellation reversal, sales returns with optional manual restock, linked customer/patient records, active cash-drawer shift linkage, and automatic sales journal postings are implemented. Hardware receipt printer configuration and statutory accounting/reporting remain pending.
 
 ## Phase 9: Doctors and Prescriptions
 
@@ -96,12 +96,12 @@ Status: in progress. Doctor masters, patient primary-doctor linkage, prescriptio
 - Reversal entries for cancellation and returns
 - Refill scheduling and repeat-dispense reminders
 
-Status: in progress. A read-only controlled-medicine register, automatic entry creation from finalized billing, reversal entry creation from bill cancellation and sales returns, a prescription refill tracker with auto-updated next-due dates, and a cash-drawer shift ledger with close variance are implemented. Statutory export formats, masked-display workflows, and broader compliance reporting remain pending.
+Status: in progress. A read-only controlled-medicine register, automatic entry creation from finalized billing, reversal entry creation from bill cancellation and sales returns, a prescription refill tracker with auto-updated next-due dates, a cash-drawer shift ledger with close variance, and a protected posted accounting journal review workspace are implemented. Statutory export formats, masked-display workflows, and broader compliance reporting remain pending.
 
 ## Later Phases
 
 11. Advanced controlled-drug and compliance records
-12. Accounting and cash management
+12. Accounting and cash management: journal foundation implemented; sub-ledgers, settlement, and reconciliation pending
 13. GST reports
 14. Business reports and dashboards
 15. Backup and restore

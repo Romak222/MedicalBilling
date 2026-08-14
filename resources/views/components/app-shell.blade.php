@@ -18,6 +18,7 @@
     $canViewCashDrawer = auth()->user()?->hasPermission('cash_drawer.view') ?? false;
     $canManageSettings = auth()->user()?->hasPermission('settings.manage') ?? false;
     $canViewReports = auth()->user()?->hasPermission('reports.view') ?? false;
+    $canViewAccounting = auth()->user()?->hasPermission('accounting.view') ?? false;
     $canManageAccess = auth()->user()?->hasPermission('users.manage') || auth()->user()?->hasPermission('roles.manage');
     $navItems = [
         ['label' => 'Dashboard', 'mark' => 'D', 'route' => route('status'), 'active' => request()->routeIs('dashboard', 'status'), 'enabled' => true],
@@ -35,6 +36,7 @@
         ['label' => 'Billing', 'mark' => 'R', 'route' => $canViewSales ? route('sales-invoices.index') : null, 'active' => request()->routeIs('billing.*', 'sales-invoices.*'), 'enabled' => $canViewSales],
         ['label' => 'Cash Drawer', 'mark' => 'K', 'route' => $canViewCashDrawer ? route('cash-drawer.index') : null, 'active' => request()->routeIs('cash-drawer.*'), 'enabled' => $canViewCashDrawer],
         ['label' => 'Reports', 'mark' => 'A', 'route' => $canViewReports ? route('reports.index') : null, 'active' => request()->routeIs('reports.*'), 'enabled' => $canViewReports],
+        ['label' => 'Accounting', 'mark' => 'J', 'route' => $canViewAccounting ? route('accounting.index') : null, 'active' => request()->routeIs('accounting.*'), 'enabled' => $canViewAccounting],
         ['label' => 'Access', 'mark' => 'U', 'route' => $canManageAccess ? route('access.index') : null, 'active' => request()->routeIs('access.*'), 'enabled' => $canManageAccess],
         ['label' => 'Settings', 'mark' => 'G', 'route' => $canManageSettings ? route('settings.index') : null, 'active' => request()->routeIs('settings.*'), 'enabled' => $canManageSettings],
     ];

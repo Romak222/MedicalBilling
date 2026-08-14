@@ -2,7 +2,7 @@
 
 Commercial Windows desktop pharmacy management system foundation for India-focused medical stores.
 
-This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving records, batch inventory records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, and sales return records, plus documentation for the larger product.
+This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, and accounting foundation. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving records, batch inventory records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, accounting journals, and sales return records, plus documentation for the larger product.
 
 ## Current Stack
 
@@ -193,7 +193,21 @@ Implemented cash-control records:
 - Dedicated `cash_drawer.view` and `cash_drawer.manage` permissions
 - Local demo shift `CD-DEMO-001` with a visible variance and manual movements
 
-Cash drawer controls do not replace accounting journals, customer/supplier ledgers, bank reconciliation, GST reports, or hardware-specific cash-drawer triggers.
+Cash drawer controls do not replace customer/supplier sub-ledgers, bank reconciliation, GST reports, or hardware-specific cash-drawer triggers.
+
+## Accounting
+
+Phase 10 now includes `/accounting` for protected review of posted accounting activity.
+
+Implemented accounting coverage:
+
+- Configurable system chart of accounts for cash, card, UPI, mixed payment, inventory, tax, supplier payable, revenue, COGS, and customer credit
+- Immutable posted journal entries and lines with balanced double-entry validation
+- Automatic postings for finalized purchase receipts, sales, sales returns, and cancellation reversals
+- Source document linkage, reversal references, audit events, and idempotent posting protection
+- Date-bounded account activity, debit/credit control totals, journal list, and journal detail pages
+
+GST/statutory reports, supplier and customer sub-ledgers, payment settlement reconciliation, and manual accounting configuration remain future work.
 
 ## Settings and Receipts
 
@@ -224,7 +238,7 @@ Implemented report coverage:
 - Cash drawer shifts, cash sales, cash refunds, and closed-shift variance
 - Controlled-medicine register CSV export for a selected date range
 
-These are operational reports, not statutory filings. GST reports, accounting journals, and jurisdiction-specific exports remain separate work.
+These are operational reports, not statutory filings. GST reports and jurisdiction-specific exports remain separate work; posted accounting journals are available from `/accounting`.
 
 ## Users and Roles
 
@@ -297,7 +311,7 @@ Implemented record coverage:
 - Dedicated `controlled_medicines.view` permission
 - Local demo controlled-medicine bill `SI-CM-DEMO-001`
 
-Broader statutory exports, GST reports, and accounting postings remain pending.
+Broader statutory exports, GST reports, and customer/supplier sub-ledgers remain pending.
 
 ## NativePHP Status
 

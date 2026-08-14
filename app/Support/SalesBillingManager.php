@@ -126,6 +126,8 @@ class SalesBillingManager
                 app(ControlledMedicineRegister::class)->recordSaleItem($invoice, $item, $actor);
             }
 
+            app(AccountingManager::class)->postSale($invoice, $actor);
+
             app(AuditLogger::class)->record('sales_invoice.created', $actor, $invoice, $this->auditMetadata($invoice));
 
             return $invoice->refresh()->load(['customer', 'patient', 'doctor', 'prescription', 'items.product', 'items.productBatch', 'items.prescriptionItem']);
@@ -172,6 +174,8 @@ class SalesBillingManager
 
                 app(ControlledMedicineRegister::class)->recordSaleCancellationItem($invoice, $item, $actor);
             }
+
+            app(AccountingManager::class)->reverseSale($invoice, $actor);
 
             app(AuditLogger::class)->record('sales_invoice.cancelled', $actor, $invoice, $this->auditMetadata($invoice));
 

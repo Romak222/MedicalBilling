@@ -6,6 +6,7 @@ use App\Models\CashDrawerShift;
 use App\Models\ControlledMedicineRegisterEntry;
 use App\Models\Customer;
 use App\Models\Doctor;
+use App\Models\JournalEntry;
 use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\PrescriptionItem;
@@ -810,6 +811,36 @@ Route::get('/reports/controlled-medicines.csv', function (FirstRunSetup $setup, 
 
     return $reports->controlledMedicineCsv($validated['from'], $validated['to']);
 })->name('reports.controlled-medicines.csv');
+
+Route::get('/accounting', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('accounting.index');
+})->name('accounting.index');
+
+Route::get('/accounting/journal/{journalEntry}', function (FirstRunSetup $setup, JournalEntry $journalEntry) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('accounting.show', [
+        'journalEntry' => $journalEntry->load('lines.account', 'createdBy'),
+    ]);
+})->name('accounting.journal.show');
 
 Route::get('/access', function (FirstRunSetup $setup) {
     if (! $setup->isComplete()) {

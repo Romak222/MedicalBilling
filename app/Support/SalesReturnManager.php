@@ -90,6 +90,8 @@ class SalesReturnManager
                 }
             }
 
+            app(AccountingManager::class)->postSalesReturn($salesReturn, $actor);
+
             app(AuditLogger::class)->record('sales_return.created', $actor, $salesReturn, $this->auditMetadata($salesReturn, $lines));
 
             return $salesReturn->refresh()->load(['salesInvoice', 'items.product', 'items.productBatch']);

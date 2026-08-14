@@ -26,6 +26,18 @@ return [
             'description' => 'View sales, inventory, refill, cash, and controlled-medicine operational reports.',
             'is_sensitive' => true,
         ],
+        'accounting.view' => [
+            'name' => 'View accounting journals',
+            'module' => 'accounting',
+            'description' => 'Review posted journal entries, account balances, and source documents.',
+            'is_sensitive' => true,
+        ],
+        'accounting.manage' => [
+            'name' => 'Manage accounting postings',
+            'module' => 'accounting',
+            'description' => 'Manage accounting configuration and controlled posting workflows.',
+            'is_sensitive' => true,
+        ],
         'users.manage' => [
             'name' => 'Manage users',
             'module' => 'access',
@@ -194,6 +206,8 @@ return [
                 'setup.manage',
                 'settings.manage',
                 'reports.view',
+                'accounting.view',
+                'accounting.manage',
                 'users.manage',
                 'roles.manage',
                 'audit.view',
@@ -229,6 +243,8 @@ return [
             'permissions' => [
                 'system.status.view',
                 'reports.view',
+                'accounting.view',
+                'accounting.manage',
                 'catalogue.view',
                 'catalogue.manage',
                 'tax_rates.manage',
