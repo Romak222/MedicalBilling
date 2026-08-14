@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Models\ControlledMedicineRegisterEntry;
+use App\Models\ApplicationSetting;
 use App\Models\CashDrawerShift;
+use App\Models\ControlledMedicineRegisterEntry;
 use App\Models\Customer;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -14,8 +15,8 @@ use App\Models\PurchaseOrder;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
 use App\Models\Supplier;
-use App\Support\CatalogueOptionRegistry;
 use App\Support\CashDrawerManager;
+use App\Support\CatalogueOptionRegistry;
 use App\Support\FirstRunSetup;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -759,6 +760,20 @@ Route::get('/cash-drawer/{cashDrawerShift}', function (FirstRunSetup $setup, Cas
     ]);
 })->name('cash-drawer.show');
 
+Route::get('/settings', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('settings.manage'), 403);
+
+    return view('settings.index');
+})->name('settings.index');
+
 Route::get('/billing', function () {
     return redirect()->route('sales-invoices.index');
 })->name('billing.index');
@@ -820,6 +835,9 @@ Route::get('/billing/sales/{salesInvoice}/receipt', function (FirstRunSetup $set
 
     return view('sales.receipt', [
         'salesInvoice' => $salesInvoice->load(['customer', 'patient', 'doctor', 'prescription', 'items.product', 'items.productBatch']),
+        'store' => $setup->primaryStore(),
+        'receiptPaperWidth' => (int) ApplicationSetting::getValue('printing.receipt_paper_width_mm', 80),
+        'receiptFooter' => ApplicationSetting::getValue('printing.receipt_footer', 'Thank you for visiting.'),
     ]);
 })->name('sales-invoices.receipt');
 

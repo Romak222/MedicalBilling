@@ -2,8 +2,10 @@
 
 namespace App\Support;
 
+use App\Models\ApplicationSetting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class SystemStatus
@@ -56,6 +58,12 @@ class SystemStatus
 
     public function backupPath(): string
     {
+        if (Schema::hasTable('application_settings')) {
+            if ($path = ApplicationSetting::getValue('backup.default_path')) {
+                return $this->trimPath((string) $path);
+            }
+        }
+
         if ($path = config('pharmacy.paths.backup')) {
             return $this->trimPath($path);
         }

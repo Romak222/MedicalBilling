@@ -1,9 +1,12 @@
 <x-layouts.app :title="config('app.name').' Receipt'">
     <div class="min-h-screen bg-white px-4 py-6 text-ink-950">
-        <div class="mx-auto max-w-sm border border-slate-300 bg-white p-4 text-sm shadow-sm print:border-0 print:shadow-none">
+        <div class="mx-auto border border-slate-300 bg-white p-4 text-sm shadow-sm print:border-0 print:shadow-none" style="width: {{ in_array($receiptPaperWidth, [58, 80], true) ? $receiptPaperWidth : 80 }}mm; max-width: 100%;">
             <div class="border-b border-slate-300 pb-3 text-center">
-                <p class="text-lg font-bold">{{ config('app.name') }}</p>
-                <p class="mt-1 text-xs text-slate-600">{{ config('pharmacy.store_code') }}</p>
+                <p class="text-lg font-bold">{{ $store?->name ?: config('app.name') }}</p>
+                <p class="mt-1 text-xs text-slate-600">{{ $store?->code ?: config('pharmacy.store_code') }}</p>
+                @if ($store?->phone || $store?->email)
+                    <p class="mt-1 text-[11px] text-slate-600">{{ collect([$store?->phone, $store?->email])->filter()->join(' | ') }}</p>
+                @endif
             </div>
 
             <div class="space-y-1 border-b border-slate-300 py-3 text-xs">
@@ -53,7 +56,7 @@
                 <div class="flex justify-between"><span>Change</span><span>{{ number_format((float) $salesInvoice->change_amount, 2) }}</span></div>
             </div>
 
-            <p class="pt-3 text-center text-xs font-semibold">Thank you</p>
+            <p class="whitespace-pre-line pt-3 text-center text-xs font-semibold">{{ $receiptFooter ?: 'Thank you for visiting.' }}</p>
 
             <div class="mt-4 flex justify-center gap-2 print:hidden">
                 <a href="{{ route('sales-invoices.show', $salesInvoice) }}" class="btn-secondary">Back</a>

@@ -188,6 +188,11 @@
 - Added `cash_drawer.view` and `cash_drawer.manage` permissions and owner-role assignment migration.
 - Added cash drawer detail views for linked cash bills, cash refunds, manual movements, expected cash, counted cash, and variance notes.
 - Added Phase 10 tests for cash drawer lifecycle, decimal reconciliation, billing linkage, duplicate open-shift prevention, and access control.
+- Continued Phase 10 with audited settings and receipt-printer configuration.
+- Added protected `/settings` with store profile, registered pharmacist, billing defaults, printer names, paper width, receipt copies, footer, and backup path controls.
+- Added transactional settings updates with `settings.updated` audit events and no sensitive-value logging.
+- Connected configured store identity, receipt paper width, and receipt footer to the printable sales receipt.
+- Added Phase 10 settings and receipt configuration tests.
 
 ## Current Phase
 
@@ -198,7 +203,7 @@ Phase 10: controlled-medicine, refill, and cash-drawer foundation.
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with hardware-specific receipt printer setup, accounting linkage, or deeper regulated reporting after the controlled-medicine, refill, and cash-drawer foundation is accepted.
+- Continue Phase 10 with accounting linkage or deeper regulated reporting after the controlled-medicine, refill, cash-drawer, and settings foundation is accepted.
 
 ## Known Issues
 
@@ -261,6 +266,22 @@ Phase 3 verification completed for the Laravel app.
 
 & .\.tools\php-8.3.33\php.exe artisan test
 # Passed: 7 tests, 24 assertions.
+
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
+# Passed.
+
+npm run build
+# Passed; Vite built production assets.
+```
+
+Phase 10 settings and receipt configuration verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar format
+# Passed.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 74 tests, 619 assertions.
 
 & .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
 # Passed.

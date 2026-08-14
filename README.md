@@ -195,6 +195,22 @@ Implemented cash-control records:
 
 Cash drawer controls do not replace accounting journals, customer/supplier ledgers, bank reconciliation, GST reports, or hardware-specific cash-drawer triggers.
 
+## Settings and Receipts
+
+Phase 10 now includes `/settings` for owner-controlled local configuration.
+
+Implemented settings coverage:
+
+- Store identity, legal fields, contact details, and primary registered pharmacist
+- Invoice prefix and financial-year start date
+- Default and receipt printer names
+- 58 mm or 80 mm receipt paper width and receipt copy count
+- Configurable receipt footer and local backup path
+- Transactional updates with `settings.updated` audit events
+- Printable receipts use the saved store identity, paper width, and footer
+
+The receipt remains an HTML print workflow. A native Windows printer bridge and hardware discovery are still separate deployment work.
+
 ## Customers and Patients
 
 Phase 8 now includes `/customers` and `/patients`.
@@ -250,7 +266,7 @@ Implemented record coverage:
 - Dedicated `controlled_medicines.view` permission
 - Local demo controlled-medicine bill `SI-CM-DEMO-001`
 
-Broader statutory exports, cashier shifts, hardware-specific receipt printer configuration, GST reports, and accounting postings remain pending.
+Broader statutory exports, GST reports, and accounting postings remain pending.
 
 ## NativePHP Status
 
