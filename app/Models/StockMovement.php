@@ -17,6 +17,8 @@ class StockMovement extends Model
 
     public const TYPE_SALE_RETURN_RESTOCK = 'sale_return_restock';
 
+    public const TYPE_STOCK_ADJUSTMENT = 'stock_adjustment';
+
     protected $fillable = [
         'product_id',
         'product_batch_id',

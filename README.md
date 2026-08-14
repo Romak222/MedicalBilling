@@ -2,7 +2,7 @@
 
 Commercial Windows desktop pharmacy management system foundation for India-focused medical stores.
 
-This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, accounting, purchase returns, and supplier payments. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving and return records, batch inventory records, supplier payment records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, accounting journals, and sales return records, plus documentation for the larger product.
+This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, accounting, purchase returns, supplier payments, stock adjustments, GST working reports, backup/restore, and hardware readiness. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a real operations dashboard, a separate diagnostics/status page, protected health/status controls, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving and return records, batch inventory records, stock adjustments, supplier payment records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, GST working reports, backup/restore controls, printer readiness, accounting journals, and sales return records, plus documentation for the larger product.
 
 ## Current Stack
 
@@ -215,7 +215,7 @@ Implemented accounting coverage:
 - Source document linkage, reversal references, audit events, and idempotent posting protection
 - Date-bounded account activity, debit/credit control totals, journal list, and journal detail pages
 
-GST/statutory reports, stock adjustments, and manual accounting configuration remain future work.
+GST working reports, stock adjustments, and inventory variance journals are implemented. Jurisdiction-specific filing packs and manual accounting configuration remain future work.
 
 ## Settings and Receipts
 
@@ -231,7 +231,7 @@ Implemented settings coverage:
 - Transactional updates with `settings.updated` audit events
 - Printable receipts use the saved store identity, paper width, and footer
 
-The receipt remains an HTML print workflow. A native Windows printer bridge and hardware discovery are still separate deployment work.
+The receipt remains an HTML print workflow. `/hardware` now discovers Windows printers and can send a controlled test page; raw printer command profiles and device-specific cash-drawer triggers remain deployment work.
 
 ## Operational Reports
 
@@ -246,7 +246,7 @@ Implemented report coverage:
 - Cash drawer shifts, cash sales, cash refunds, and closed-shift variance
 - Controlled-medicine register CSV export for a selected date range
 
-These are operational reports, not statutory filings. GST reports and jurisdiction-specific exports remain separate work; posted accounting journals are available from `/accounting`.
+These are operational reports, not statutory filings. `/reports/gst` provides a date-bounded GST working report and CSV; jurisdiction-specific filing formats remain separate work. Posted accounting journals are available from `/accounting`.
 
 ## Users and Roles
 
@@ -366,4 +366,4 @@ Phase 2 produced an unpacked Windows app at `nativephp/electron/dist/win-unpacke
 
 ## Phase Boundary
 
-The supplier payment, supplier ledger, and accounting foundation is now implemented. Next work is focused on statutory GST exports, stock adjustments, deeper regulated reporting, and release hardening.
+The supplier payment, supplier ledger, accounting, stock-adjustment, GST working-report, backup/restore, and hardware-readiness foundations are implemented. Multi-counter support is intentionally excluded. Next work is jurisdiction-specific filing packs, deeper regulated controls, installer signing, and production release hardening.

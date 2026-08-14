@@ -103,7 +103,7 @@ Phase 6 adds purchase orders and purchase order items as planning/request record
 
 ## Batch Inventory Boundary
 
-Phase 7 adds purchase invoices, product batches, and purchase-receiving stock movements. Expiry belongs to product batches, not product master records. Finalizing a purchase invoice creates or updates batches and records immutable stock movement rows. The current accounting foundation also adds bounded purchase returns, supplier payments, supplier ledger entries, and journal postings. Stock adjustments and GST reporting remain pending.
+Phase 7 adds purchase invoices, product batches, and purchase-receiving stock movements. Expiry belongs to product batches, not product master records. Finalizing a purchase invoice creates or updates batches and records immutable stock movement rows. The current accounting foundation also adds bounded purchase returns, supplier payments, supplier ledger entries, journal postings, protected stock adjustments, and GST working reports.
 
 ## Billing Boundary
 
@@ -111,11 +111,11 @@ Phase 8 adds sales invoices and sales invoice items with optional linked custome
 
 ## Clinical Workflow Boundary
 
-Phase 9 adds doctor masters, patient primary-doctor linkage, prescription headers, prescription line items, local attachment storage, and prescription-linked dispensing checks. Billing can now enforce prescription selection for flagged products and tracks dispensed quantity against prescription lines. Controlled-drug registers, accounting entries, GST reports, and hardware-level printer integration remain pending.
+Phase 9 adds doctor masters, patient primary-doctor linkage, prescription headers, prescription line items, local attachment storage, and prescription-linked dispensing checks. Billing can now enforce prescription selection for flagged products and tracks dispensed quantity against prescription lines. Controlled-drug registers, accounting entries, GST working reports, and workstation printer readiness are now implemented; filing-specific exports and raw device profiles remain pending.
 
 ## Controlled-Medicine Boundary
 
-Phase 10 adds a read-only controlled-medicine register driven from finalized sales, sales cancellation, and sales returns, refill-tracked prescription-line timing fields and a refill review workspace, and a cash-drawer shift ledger with active cash sale/refund linkage and close variance. The register, refill tracker, and drawer ledger store audited context derived from billing history, but statutory exports, masked-display workflows, accounting journals, and regulator-specific reporting remain pending.
+Phase 10 adds a read-only controlled-medicine register driven from finalized sales, sales cancellation, and sales returns, refill-tracked prescription-line timing fields and a refill review workspace, a cash-drawer shift ledger with active cash sale/refund linkage and close variance, accounting journals, source-linked ledgers, GST working reports, stock adjustments, backup/restore, and workstation hardware readiness. Statutory filing exports, masked-display workflows, recall controls, and regulator-specific reporting remain pending.
 
 ## Transaction Rules
 

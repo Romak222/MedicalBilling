@@ -170,6 +170,12 @@ return [
             'description' => 'Receive stock and create audited inventory movements.',
             'is_sensitive' => true,
         ],
+        'inventory.adjust' => [
+            'name' => 'Adjust inventory',
+            'module' => 'inventory',
+            'description' => 'Finalize sensitive stock-count adjustments with an immutable movement and audit trail.',
+            'is_sensitive' => true,
+        ],
         'sales.view' => [
             'name' => 'View sales',
             'module' => 'sales',
@@ -230,6 +236,7 @@ return [
                 'purchases.manage',
                 'inventory.view',
                 'inventory.manage',
+                'inventory.adjust',
                 'sales.view',
                 'sales.manage',
                 'cash_drawer.view',
@@ -263,6 +270,7 @@ return [
                 'purchases.manage',
                 'inventory.view',
                 'inventory.manage',
+                'inventory.adjust',
                 'sales.view',
                 'sales.manage',
                 'cash_drawer.view',

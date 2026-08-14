@@ -47,4 +47,4 @@ The Inventory Batches page shows batches with available quantity and expiry stat
 
 ## Boundary
 
-The initial Phase 7 receiving slice handled purchase intake only. The current system also consumes and reverses stock through billing and returns, and links finalized purchase receipts, purchase returns, and supplier payments to accounting and supplier ledgers. Stock adjustment, stock verification, recall blocking, and GST reports remain pending.
+The initial Phase 7 receiving slice handled purchase intake only. The current system also consumes and reverses stock through billing and returns, links finalized purchase receipts, purchase returns, and supplier payments to accounting and supplier ledgers, and supports protected physical-count adjustments with signed variance journals. Stock verification sheets, recall blocking, and low-stock alerting remain pending.

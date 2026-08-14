@@ -19,9 +19,12 @@
     $canManageSettings = auth()->user()?->hasPermission('settings.manage') ?? false;
     $canViewReports = auth()->user()?->hasPermission('reports.view') ?? false;
     $canViewAccounting = auth()->user()?->hasPermission('accounting.view') ?? false;
+    $canViewHardware = auth()->user()?->hasPermission('system.status.view') ?? false;
+    $canManageBackups = auth()->user()?->hasPermission('settings.manage') ?? false;
     $canManageAccess = auth()->user()?->hasPermission('users.manage') || auth()->user()?->hasPermission('roles.manage');
     $navItems = [
-        ['label' => 'Dashboard', 'mark' => 'D', 'route' => route('status'), 'active' => request()->routeIs('dashboard', 'status'), 'enabled' => true],
+        ['label' => 'Dashboard', 'mark' => 'D', 'route' => route('dashboard'), 'active' => request()->routeIs('dashboard'), 'enabled' => true],
+        ['label' => 'System Status', 'mark' => 'Q', 'route' => route('status'), 'active' => request()->routeIs('status'), 'enabled' => auth()->user()?->hasPermission('system.status.view') ?? false],
         ['label' => 'Products', 'mark' => 'P', 'route' => $canViewCatalogue ? route('products.index') : null, 'active' => request()->routeIs('products.index', 'products.show', 'products.create', 'products.edit', 'catalogue.index'), 'enabled' => $canViewCatalogue],
         ['label' => 'Product Options', 'mark' => 'O', 'route' => $canManageCatalogue ? route('catalogue.masters') : null, 'active' => request()->routeIs('catalogue.masters', 'catalogue.options.*'), 'enabled' => $canManageCatalogue],
         ['label' => 'Suppliers', 'mark' => 'S', 'route' => $canViewSuppliers ? route('suppliers.index') : null, 'active' => request()->routeIs('suppliers.*'), 'enabled' => $canViewSuppliers],
@@ -37,6 +40,8 @@
         ['label' => 'Cash Drawer', 'mark' => 'K', 'route' => $canViewCashDrawer ? route('cash-drawer.index') : null, 'active' => request()->routeIs('cash-drawer.*'), 'enabled' => $canViewCashDrawer],
         ['label' => 'Reports', 'mark' => 'A', 'route' => $canViewReports ? route('reports.index') : null, 'active' => request()->routeIs('reports.*'), 'enabled' => $canViewReports],
         ['label' => 'Accounting', 'mark' => 'J', 'route' => $canViewAccounting ? route('accounting.index') : null, 'active' => request()->routeIs('accounting.*'), 'enabled' => $canViewAccounting],
+        ['label' => 'Hardware', 'mark' => 'H', 'route' => $canViewHardware ? route('hardware.index') : null, 'active' => request()->routeIs('hardware.*'), 'enabled' => $canViewHardware],
+        ['label' => 'Backups', 'mark' => 'Z', 'route' => $canManageBackups ? route('backups.index') : null, 'active' => request()->routeIs('backups.*'), 'enabled' => $canManageBackups],
         ['label' => 'Access', 'mark' => 'U', 'route' => $canManageAccess ? route('access.index') : null, 'active' => request()->routeIs('access.*'), 'enabled' => $canManageAccess],
         ['label' => 'Settings', 'mark' => 'G', 'route' => $canManageSettings ? route('settings.index') : null, 'active' => request()->routeIs('settings.*'), 'enabled' => $canManageSettings],
     ];

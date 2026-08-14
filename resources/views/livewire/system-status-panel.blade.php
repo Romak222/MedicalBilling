@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="grid gap-4 border-t border-slate-200/80 bg-slate-50/70 p-5 lg:grid-cols-2">
+    <div class="grid gap-4 border-t border-slate-200/80 bg-slate-50/70 p-5 lg:grid-cols-3">
         <div>
             <p class="metric-label">Application Data Path</p>
             <p class="mt-2 break-all rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-ink-700 shadow-sm">{{ $status['paths']['application_data'] ?? 'unknown' }}</p>
@@ -49,6 +49,11 @@
         <div>
             <p class="metric-label">Backup Path</p>
             <p class="mt-2 break-all rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-ink-700 shadow-sm">{{ $status['paths']['backup'] ?? 'unknown' }}</p>
+        </div>
+        <div>
+            <p class="metric-label">Backup Readiness</p>
+            <p class="mt-2 text-sm font-semibold {{ ($status['backup']['writable'] ?? false) ? 'text-medical-700' : 'text-red-700' }}">{{ ($status['backup']['writable'] ?? false) ? 'Writable' : 'Not writable' }}</p>
+            <p class="mt-1 text-xs text-slate-500">{{ $status['backup']['latest'] ? 'Latest backup '.$status['backup']['latest'] : 'No completed backup recorded' }}</p>
         </div>
     </div>
 </section>

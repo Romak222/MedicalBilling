@@ -82,4 +82,4 @@ When a shift is open, finalized cash invoices and cash refunds automatically sto
 
 ## Boundary
 
-Phase 8 billing now supports controlled-medicine register and cash-drawer linkage foundations, but it still does not implement accounting postings, GST reports, or hardware-specific receipt printer configuration.
+Phase 8 billing now supports controlled-medicine register and cash-drawer linkage foundations, automatic accounting postings, GST working-report source data, browser printing, and printer readiness checks. Device-specific printer profiles, raw hardware protocols, and jurisdiction-specific filing packs remain separate future work.

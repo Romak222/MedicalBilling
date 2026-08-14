@@ -80,6 +80,12 @@ return [
             'normal_balance' => 'debit',
             'description' => 'Cost of inventory issued through sales.',
         ],
+        '5200' => [
+            'name' => 'Inventory Adjustment Expense',
+            'account_type' => 'expense',
+            'normal_balance' => 'debit',
+            'description' => 'Gain or loss recognized when physical stock is reconciled to the inventory ledger.',
+        ],
         '6000' => [
             'name' => 'Payment Processing Fees',
             'account_type' => 'expense',

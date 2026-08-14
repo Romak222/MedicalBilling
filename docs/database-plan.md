@@ -1,6 +1,6 @@
 # Database Plan
 
-This document is the long-range database plan. The current foundation has implemented first-run foundation, access-control, audit-login, catalogue master tables, supplier profile tables, purchase order tables, purchase invoice receiving tables, product batches, stock movements, POS billing tables, customer, patient, doctor, prescription, controlled-medicine register tables, prescription refill timing fields, cash-drawer shift tables, sales return tables, accounting journals, customer/supplier sub-ledgers, payment reconciliations, purchase returns, and supplier payments. GST reporting, broader statutory reporting, and stock adjustment workflows remain future phases.
+This document is the long-range database plan. The current foundation has implemented first-run foundation, access-control, audit-login, catalogue master tables, supplier profile tables, purchase order tables, purchase invoice receiving tables, product batches, stock movements, stock adjustment documents, POS billing tables, customer, patient, doctor, prescription, controlled-medicine register tables, prescription refill timing fields, cash-drawer shift tables, sales return tables, accounting journals, customer/supplier sub-ledgers, payment reconciliations, purchase returns, supplier payments, and backup job records. GST working reports are derived from source documents without a separate tax ledger; jurisdiction-specific statutory reporting and advanced stock verification remain future phases.
 
 ## Database Targets
 
@@ -87,7 +87,7 @@ Phase 6 implemented `suppliers`, `supplier_contacts`, `purchase_orders`, and `pu
 - expiry_blocks
 - recalls
 
-Phase 7-8 implemented `product_batches` and `stock_movements` for purchase receiving, sales consumption, bill cancellation reversal, and optional sales-return restock. Stock locations, adjustments, verifications, expiry blocks, recalls, and advanced alerting remain pending.
+Phase 7-8 implemented `product_batches` and `stock_movements` for purchase receiving, sales consumption, bill cancellation reversal, optional sales-return restock, and protected stock adjustments. Stock locations, verification sheets, expiry blocks, recalls, and advanced alerting remain pending.
 
 ### Sales
 
@@ -112,7 +112,7 @@ Phase 8-10 implemented `customers`, `patients`, `doctors`, `prescriptions`, `pre
 - pharmacist_verifications
 - compliance_events
 
-Phase 10 implements `controlled_medicine_register_entries` as an automatic, bill-linked register foundation for controlled-product sales, cancellations, and sales returns. Broader statutory exports, masked-display workflows, and reporting packs remain pending.
+Phase 10 implements `controlled_medicine_register_entries` as an automatic, bill-linked register foundation for controlled-product sales, cancellations, and sales returns. Broader statutory filing exports, masked-display workflows, recall controls, and reporting packs remain pending.
 
 ### Accounts
 
@@ -124,7 +124,7 @@ Phase 10 implements `controlled_medicine_register_entries` as an automatic, bill
 - supplier_ledger_entries
 - payment_reconciliations
 
-Phase 10 implemented `accounts`, `journal_entries`, and `journal_entry_lines` with a configurable chart of accounts, balanced double-entry validation, source-document linkage, cancellation reversal entries, and automatic postings for sales, returns, purchase receipts, purchase returns, and supplier payments. `customer_ledger_entries`, `supplier_ledger_entries`, and `payment_reconciliations` now provide source-linked customer/supplier statements and card/UPI/mixed settlement posting. Vouchers and statutory tax reporting remain pending.
+Phase 10 implemented `accounts`, `journal_entries`, and `journal_entry_lines` with a configurable chart of accounts, balanced double-entry validation, source-document linkage, cancellation reversal entries, and automatic postings for sales, returns, purchase receipts, purchase returns, supplier payments, and stock variances. `customer_ledger_entries`, `supplier_ledger_entries`, and `payment_reconciliations` now provide source-linked customer/supplier statements and card/UPI/mixed settlement posting. GST working reports are derived from source documents; vouchers, filing-specific tax ledgers, and regulator-specific tax reporting remain pending.
 
 ### Audit
 

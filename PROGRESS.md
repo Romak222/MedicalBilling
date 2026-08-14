@@ -223,6 +223,14 @@
 - Added supplier payment journal postings, supplier ledger settlement entries, and idempotent source links.
 - Added protected purchase-return and supplier-payment list, create, and immutable detail pages.
 - Added purchase-return and supplier-payment authorization, workflow, accounting, stock, and audit tests.
+- Replaced the old status-as-dashboard screen with a real daily operations dashboard.
+- Added a separate `/status` diagnostics page for runtime, database, path, backup, offline-core, and hardware readiness.
+- Added immutable stock adjustment documents with before/count/delta quantities, signed stock movements, variance journals, and sensitive inventory-adjust permission.
+- Added date-bounded GST working reports by transaction type and tax rate with CSV export.
+- Added database backup jobs with checksum recording, file-backed SQLite restore, and pre-restore safety copies.
+- Added Windows printer discovery, browser-print readiness, printer test-page sending, and camera-scan limitation messaging.
+- Added security response headers and configurable login attempt throttling.
+- Explicitly kept multi-counter support outside this release phase.
 
 ## Current Phase
 
@@ -233,7 +241,7 @@ Phase 10: controlled-medicine, refill, cash-drawer, settings, operational report
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with statutory GST exports, stock adjustments, deeper regulated reporting, and release hardening.
+- Continue Phase 10 with deeper jurisdiction-specific statutory filing packs, recall/stock verification workflows, installer signing, and production release hardening.
 
 ## Known Issues
 
@@ -662,6 +670,22 @@ composer validate --no-check-publish
 # Passed.
 ```
 
+Phase 10 production foundation verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; stock adjustment, backup, production-permission, and inventory-account migrations applied.
+
+& .\.tools\php-8.3.33\php.exe artisan test tests/Feature/ProductionFoundationTest.php
+# Passed: 5 tests, 35 assertions.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed during final verification after this slice.
+
+npm run build
+# Passed; Vite built production assets.
+```
+
 ## Important Decisions
 
 - Laravel 12 was selected instead of Laravel 13 due to the installed PHP 8.2.12 runtime.
@@ -686,7 +710,7 @@ composer validate --no-check-publish
 - Finalized bills consume batch stock using immutable stock movements. Bill cancellation reverses stock through new movement rows instead of deleting movement history.
 - Held bills do not reserve or reduce stock; stock is affected only when a bill is finalized.
 - POS quick scan accepts product barcodes or batch numbers. Product barcodes resolve to the earliest expiring available batch.
-- Sales receipt printing is an HTML print view; printer hardware setup remains a later configuration phase.
+- Sales receipt printing remains an HTML print view, with Windows printer discovery and a controlled test-page workflow available from `/hardware`.
 - Customer medicine returns are recorded as separate return documents, not bill cancellation.
 - Returned packs are not restocked automatically; each line must be manually approved for restock and must still be saleable and within expiry.
 - Once a bill has recorded returns, the bill cannot be cancelled because reversal must stay traceable through the return document trail.
@@ -699,6 +723,10 @@ composer validate --no-check-publish
 - Cash sales and cash refunds attach to the active drawer shift; non-cash payments remain outside drawer totals.
 - Customer ledger entries currently cover return-created credits; customer payment-detail allocation remains future work.
 - Settlement reconciliation derives expected card, UPI, or mixed totals from finalized bills and requires settlement plus provider fee to match exactly.
+- Stock counts are corrected through immutable adjustment documents; direct batch quantity edits are not exposed.
+- GST reporting is derived from finalized tax-bearing source documents and is labeled as a working report until jurisdiction-specific filing formats are implemented.
+- Backups are local SQLite artifacts with checksums; restore creates a pre-restore safety copy and is restricted to file-backed single-computer deployments.
+- Multi-counter support is intentionally excluded from the current release phase.
 
 ## Commands Needed
 

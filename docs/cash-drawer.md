@@ -39,6 +39,6 @@ All persisted money values use decimal columns. Reconciliation arithmetic is per
 
 ## Boundary
 
-This is a cash-control foundation, not the accounting ledger. Journal entries, payment allocations, supplier/customer ledgers, bank reconciliation, GST reporting, multi-counter device ownership, and hardware cash-drawer triggers remain separate future work.
+This is a cash-control foundation, not a bank-reconciliation module. Journal entries, payment allocations, supplier/customer ledgers, GST working reports, multi-counter device ownership, and hardware cash-drawer triggers are separate boundaries. Accounting and source-linked ledgers are implemented; jurisdiction-specific tax filing and hardware-trigger integrations remain future work.
 
 The local demo chain creates closed shift `CD-DEMO-001` with a `-5.00` variance plus demo cash-in and cash-out movements when an owner account exists.

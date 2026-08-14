@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\ApplicationSetting;
+use App\Models\BackupJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
@@ -34,6 +35,7 @@ class SystemStatus
                 'application_data' => $this->applicationDataPath(),
                 'backup' => $this->backupPath(),
             ],
+            'backup' => $this->backupStatus(),
             'runtime' => [
                 'php' => PHP_VERSION,
                 'os' => PHP_OS_FAMILY,
@@ -100,6 +102,19 @@ class SystemStatus
                 'message' => $exception->getMessage(),
             ];
         }
+    }
+
+    private function backupStatus(): array
+    {
+        $path = $this->backupPath();
+
+        return [
+            'directory_exists' => File::isDirectory($path),
+            'writable' => File::isDirectory($path) && is_writable($path),
+            'latest' => Schema::hasTable('backup_jobs')
+                ? BackupJob::query()->where('status', BackupJob::STATUS_COMPLETED)->latest('completed_at')->first()?->completed_at?->toIso8601String()
+                : null,
+        ];
     }
 
     private function trimPath(string $path): string

@@ -9,6 +9,7 @@ use App\Models\PurchaseInvoice;
 use App\Models\PurchaseReturn;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
+use App\Models\StockAdjustment;
 use App\Models\SupplierPayment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -279,6 +280,49 @@ class AccountingManager
                 'paid_by' => $actor->id,
             ]);
             app(SubledgerManager::class)->postSupplierPayment($payment, $entry, $actor);
+
+            return $entry;
+        });
+    }
+
+    public function postStockAdjustment(StockAdjustment $adjustment, User $actor): JournalEntry
+    {
+        return DB::transaction(function () use ($adjustment, $actor): JournalEntry {
+            $lines = [];
+
+            foreach ($adjustment->items as $item) {
+                $valueCents = $this->cents($item->value_amount);
+
+                if ($valueCents <= 0) {
+                    continue;
+                }
+
+                $deltaMicros = $this->decimalToScaleInt($item->delta_quantity, 6);
+                $isIncrease = $deltaMicros > 0;
+                $lines[] = [
+                    'account_code' => $isIncrease ? '1100' : '5200',
+                    'debit_cents' => $valueCents,
+                    'credit_cents' => 0,
+                    'memo' => 'Stock count adjustment '.$adjustment->adjustment_number.' / '.$item->batch_number_snapshot,
+                ];
+                $lines[] = [
+                    'account_code' => $isIncrease ? '5200' : '1100',
+                    'debit_cents' => 0,
+                    'credit_cents' => $valueCents,
+                    'memo' => 'Stock count adjustment '.$adjustment->adjustment_number.' / '.$item->batch_number_snapshot,
+                ];
+            }
+
+            $entry = $this->postEntry(
+                $adjustment,
+                'stock_adjustment',
+                $adjustment->adjustment_date?->toDateString() ?: today()->toDateString(),
+                'Stock adjustment '.$adjustment->adjustment_number,
+                $lines,
+                $actor
+            );
+
+            $adjustment->update(['journal_entry_id' => $entry->id]);
 
             return $entry;
         });

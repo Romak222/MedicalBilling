@@ -17,18 +17,24 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseReturn;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
+use App\Models\StockAdjustment;
 use App\Models\Supplier;
 use App\Models\SupplierPayment;
+use App\Support\AuditLogger;
 use App\Support\CashDrawerManager;
 use App\Support\CatalogueOptionRegistry;
+use App\Support\DashboardService;
 use App\Support\FirstRunSetup;
+use App\Support\GstReportService;
+use App\Support\HardwareStatus;
 use App\Support\OperationalReportService;
 use App\Support\SubledgerManager;
+use App\Support\SystemStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-Route::get('/', function (FirstRunSetup $setup) {
+Route::get('/', function (FirstRunSetup $setup, DashboardService $dashboard) {
     if (! $setup->isComplete()) {
         return redirect()->route('setup');
     }
@@ -40,12 +46,12 @@ Route::get('/', function (FirstRunSetup $setup) {
     abort_unless(auth()->user()->hasPermission('system.status.view'), 403);
 
     return view('dashboard', [
-        'setupComplete' => true,
         'primaryStore' => $setup->primaryStore(),
+        'summary' => $dashboard->summary(),
     ]);
 })->name('dashboard');
 
-Route::get('/status', function (FirstRunSetup $setup) {
+Route::get('/status', function (FirstRunSetup $setup, SystemStatus $systemStatus) {
     if (! $setup->isComplete()) {
         return redirect()->route('setup');
     }
@@ -56,9 +62,10 @@ Route::get('/status', function (FirstRunSetup $setup) {
 
     abort_unless(auth()->user()->hasPermission('system.status.view'), 403);
 
-    return view('dashboard', [
+    return view('status', [
         'setupComplete' => true,
         'primaryStore' => $setup->primaryStore(),
+        'status' => $systemStatus->summary(),
     ]);
 })->name('status');
 
@@ -871,6 +878,57 @@ Route::get('/inventory/batches', function (FirstRunSetup $setup) {
     return view('inventory.batches.index');
 })->name('inventory.batches.index');
 
+Route::get('/inventory/adjustments', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('inventory.view'), 403);
+
+    return view('inventory.adjustments.index', [
+        'adjustments' => StockAdjustment::query()
+            ->with('items')
+            ->latest('adjustment_date')
+            ->latest('id')
+            ->limit(100)
+            ->get(),
+    ]);
+})->name('inventory.adjustments.index');
+
+Route::get('/inventory/adjustments/create', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('inventory.adjust'), 403);
+
+    return view('inventory.adjustments.form');
+})->name('inventory.adjustments.create');
+
+Route::get('/inventory/adjustments/{stockAdjustment}', function (FirstRunSetup $setup, StockAdjustment $stockAdjustment) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('inventory.view'), 403);
+
+    return view('inventory.adjustments.show', [
+        'adjustment' => $stockAdjustment->load(['items.productBatch.product', 'journalEntry']),
+    ]);
+})->name('inventory.adjustments.show');
+
 Route::get('/cash-drawer', function (FirstRunSetup $setup) {
     if (! $setup->isComplete()) {
         return redirect()->route('setup');
@@ -916,6 +974,56 @@ Route::get('/settings', function (FirstRunSetup $setup) {
     return view('settings.index');
 })->name('settings.index');
 
+Route::get('/backups', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('settings.manage'), 403);
+
+    return view('backups.index');
+})->name('backups.index');
+
+Route::get('/hardware', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('system.status.view'), 403);
+
+    return view('hardware.index');
+})->name('hardware.index');
+
+Route::post('/hardware/test-printer', function (FirstRunSetup $setup, Request $request, HardwareStatus $hardware, AuditLogger $auditLogger) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('settings.manage'), 403);
+    $validated = $request->validate(['printer' => ['required', 'string', 'max:255']]);
+
+    try {
+        $hardware->printTest($validated['printer']);
+        $auditLogger->record('hardware.printer_tested', auth()->user(), null, ['printer' => $validated['printer']], $request);
+
+        return redirect()->route('hardware.index')->with('status', 'Printer test page sent.');
+    } catch (Throwable $exception) {
+        return redirect()->route('hardware.index')->with('error', $exception->getMessage());
+    }
+})->name('hardware.test-printer');
+
 Route::get('/reports', function (FirstRunSetup $setup) {
     if (! $setup->isComplete()) {
         return redirect()->route('setup');
@@ -929,6 +1037,41 @@ Route::get('/reports', function (FirstRunSetup $setup) {
 
     return view('reports.index');
 })->name('reports.index');
+
+Route::get('/reports/gst', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('reports.view'), 403);
+
+    return view('gst-reports.index');
+})->name('reports.gst.index');
+
+Route::get('/reports/gst.csv', function (FirstRunSetup $setup, Request $request, GstReportService $reports) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('reports.view'), 403);
+
+    $validated = $request->validate([
+        'from' => ['required', 'date_format:Y-m-d'],
+        'to' => ['required', 'date_format:Y-m-d'],
+    ]);
+
+    abort_if($validated['from'] > $validated['to'], 422, 'The report end date must be on or after the start date.');
+
+    return $reports->csv($validated['from'], $validated['to']);
+})->name('reports.gst.csv');
 
 Route::get('/reports/controlled-medicines.csv', function (FirstRunSetup $setup, Request $request, OperationalReportService $reports) {
     if (! $setup->isComplete()) {

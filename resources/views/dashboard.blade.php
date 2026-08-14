@@ -1,56 +1,19 @@
-<x-layouts.app :title="config('app.name').' Status'">
-    @php
-        $setupComplete = $setupComplete ?? false;
-        $primaryStore = $primaryStore ?? null;
-    @endphp
+<x-layouts.app :title="config('app.name').' Dashboard'">
+    <x-app-shell :page-title="$primaryStore?->name ?? config('app.name')" section-label="Operations Dashboard">
+        <x-slot:actions>
+            @if (auth()->user()?->hasPermission('sales.manage'))<a href="{{ route('sales-invoices.create') }}" class="btn-primary">New Sale</a>@endif
+            @if (auth()->user()?->hasPermission('purchases.manage'))<a href="{{ route('purchase-invoices.create') }}" class="btn-secondary">Receive Stock</a>@endif
+            @if (auth()->user()?->hasPermission('inventory.adjust'))<a href="{{ route('inventory.adjustments.create') }}" class="btn-secondary">Adjust Stock</a>@endif
+        </x-slot>
 
-    <x-app-shell :page-title="$primaryStore?->name ?? config('app.name')" section-label="Phase 5">
-        <section class="space-y-5">
-            <div class="surface-panel overflow-hidden">
-                <div class="grid gap-0 lg:grid-cols-[1.5fr_1fr]">
-                    <div class="border-b border-slate-200/80 p-5 lg:border-b-0 lg:border-r">
-                        <p class="section-kicker">Store Foundation</p>
-                        <h2 class="mt-2 text-2xl font-semibold tracking-normal text-ink-950">Local pharmacy workspace</h2>
-                        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Access control, setup profile, catalogue foundation, and audit logging are active for this phase.</p>
-                    </div>
-                    <div class="grid grid-cols-3 divide-x divide-slate-200/80">
-                        <div class="p-5">
-                            <p class="metric-label">Phase</p>
-                            <p class="mt-2 text-2xl font-semibold text-care-700">5</p>
-                        </div>
-                        <div class="p-5">
-                            <p class="metric-label">Mode</p>
-                            <p class="mt-2 text-2xl font-semibold text-medical-700">Local</p>
-                        </div>
-                        <div class="p-5">
-                            <p class="metric-label">Setup</p>
-                            <p class="mt-2 text-2xl font-semibold {{ $setupComplete ? 'text-medical-700' : 'text-alert-700' }}">{{ $setupComplete ? 'Done' : 'Open' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="space-y-5">
+            <section class="surface-panel overflow-hidden"><div class="grid gap-0 lg:grid-cols-[1.4fr_1fr]"><div class="border-b border-slate-200/80 p-6 lg:border-b-0 lg:border-r"><p class="section-kicker">Today, {{ $summary['date']->format('d M Y') }}</p><h2 class="mt-2 text-3xl font-semibold tracking-normal text-ink-950">The store at a glance</h2><p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Monitor sales, stock risk, controlled dispensing, and cash operations from one local-first workspace.</p></div><div class="grid grid-cols-2 divide-x divide-y divide-slate-200/80"><div class="p-5"><p class="metric-label">Store Code</p><p class="mt-2 text-xl font-semibold text-medical-700">{{ $primaryStore?->code ?: config('pharmacy.store_code') }}</p></div><div class="p-5"><p class="metric-label">Operating Mode</p><p class="mt-2 text-xl font-semibold text-ink-950">Single Computer</p></div><div class="p-5"><p class="metric-label">Database</p><p class="mt-2 text-xl font-semibold text-ink-950">{{ config('database.default') }}</p></div><div class="p-5"><p class="metric-label">System</p><p class="mt-2 text-xl font-semibold text-medical-700">Online locally</p></div></div></div></section>
 
-            <livewire:system-status-panel />
+            <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-5"><div class="metric-tile border-t-4 border-t-pharma-600"><p class="metric-label">Today's Sales</p><p class="mt-2 text-3xl font-semibold text-pharma-700">{{ $summary['today']['sales'] }}</p><p class="mt-1 text-xs text-slate-500">{{ $summary['today']['bills'] }} finalized bills</p></div><div class="metric-tile border-t-4 border-t-care-600"><p class="metric-label">Available Batches</p><p class="mt-2 text-3xl font-semibold text-care-700">{{ $summary['inventory']['available_batches'] }}</p><p class="mt-1 text-xs text-slate-500">{{ $summary['inventory']['available_quantity'] }} units on hand</p></div><div class="metric-tile border-t-4 border-t-alert-500"><p class="metric-label">Expiring 30 Days</p><p class="mt-2 text-3xl font-semibold text-alert-700">{{ $summary['inventory']['expiring_30_days'] }}</p><p class="mt-1 text-xs text-slate-500">{{ $summary['inventory']['expired'] }} expired available batches</p></div><div class="metric-tile border-t-4 border-t-medical-600"><p class="metric-label">Supplier Payable</p><p class="mt-2 text-3xl font-semibold text-medical-700">{{ $summary['attention']['supplier_payable'] }}</p><p class="mt-1 text-xs text-slate-500">{{ $summary['attention']['suppliers_with_balance'] }} suppliers with balance</p></div><div class="metric-tile border-t-4 border-t-red-500"><p class="metric-label">Attention</p><p class="mt-2 text-3xl font-semibold text-red-700">{{ $summary['attention']['refills_overdue'] + $summary['inventory']['expired'] }}</p><p class="mt-1 text-xs text-slate-500">Overdue refills and expired batches</p></div></section>
 
-            <div class="grid gap-4 xl:grid-cols-3">
-                <section class="metric-tile">
-                    <h2 class="metric-label">Foundation</h2>
-                    <p class="mt-3 text-3xl font-semibold tracking-normal text-ink-950">Laravel 12</p>
-                    <p class="mt-2 text-sm text-slate-600">Blade, Livewire, Alpine and Tailwind are installed through local packages.</p>
-                </section>
+            <section class="grid gap-5 xl:grid-cols-[1.35fr_1fr]"><div class="surface-panel overflow-hidden"><div class="flex items-center justify-between border-b border-slate-200 bg-white p-5"><div><p class="section-kicker">Counter activity</p><h2 class="mt-1 text-lg font-semibold text-ink-950">Recent finalized sales</h2></div><a href="{{ route('sales-invoices.index') }}" class="btn-secondary">View Billing</a></div><div class="overflow-x-auto"><table class="min-w-full divide-y divide-slate-200 text-left text-sm"><thead class="table-header"><tr><th class="px-4 py-3">Bill</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Items</th><th class="px-4 py-3 text-right">Total</th></tr></thead><tbody class="divide-y divide-slate-100 bg-white">@forelse ($summary['recent_sales'] as $invoice)<tr><td class="px-4 py-3"><a href="{{ route('sales-invoices.show', $invoice) }}" class="font-semibold text-medical-700 hover:underline">{{ $invoice->invoice_number }}</a><p class="mt-1 text-xs text-slate-500">{{ $invoice->invoice_date?->format('d M Y') }}</p></td><td class="px-4 py-3 text-slate-700">{{ $invoice->customer?->name ?: ($invoice->customer_name ?: 'Walk-in') }}</td><td class="px-4 py-3 text-slate-700">{{ $invoice->items->count() }}</td><td class="px-4 py-3 text-right font-semibold text-ink-900">{{ $invoice->total_amount }}</td></tr>@empty<tr><td colspan="4" class="px-4 py-10 text-center text-sm text-slate-500">No finalized sales yet.</td></tr>@endforelse</tbody></table></div></div><div class="surface-panel overflow-hidden"><div class="flex items-center justify-between border-b border-slate-200 bg-white p-5"><div><p class="section-kicker">Stock ledger</p><h2 class="mt-1 text-lg font-semibold text-ink-950">Latest movements</h2></div><a href="{{ route('inventory.batches.index') }}" class="btn-secondary">Inventory</a></div><div class="divide-y divide-slate-100 bg-white">@forelse ($summary['recent_movements'] as $movement)<div class="flex items-start justify-between gap-3 p-4"><div><p class="font-semibold text-ink-950">{{ $movement->product?->name ?: 'Deleted product' }}</p><p class="mt-1 text-xs text-slate-500">{{ str_replace('_', ' ', ucfirst($movement->movement_type)) }} / {{ $movement->productBatch?->batch_number }}</p></div><span class="font-semibold {{ str_starts_with($movement->quantity, '-') ? 'text-red-700' : 'text-medical-700' }}">{{ $movement->quantity }}</span></div>@empty<div class="p-10 text-center text-sm text-slate-500">No stock movements yet.</div>@endforelse</div></div></section>
 
-                <section class="metric-tile">
-                    <h2 class="metric-label">Storage</h2>
-                    <p class="mt-3 text-3xl font-semibold tracking-normal text-ink-950">SQLite</p>
-                    <p class="mt-2 text-sm text-slate-600">Local development uses SQLite; LAN mode is planned for MySQL or MariaDB.</p>
-                </section>
-
-                <section class="metric-tile">
-                    <h2 class="metric-label">Setup</h2>
-                    <p class="mt-3 text-3xl font-semibold tracking-normal {{ $setupComplete ? 'text-medical-700' : 'text-alert-700' }}">{{ $setupComplete ? 'Complete' : 'Pending' }}</p>
-                    <p class="mt-2 text-sm text-slate-600">Store profile, pharmacist record, owner account and local operating paths.</p>
-                </section>
-            </div>
-        </section>
+            <section class="grid gap-5 xl:grid-cols-3"><div class="surface-panel p-5"><p class="section-kicker">Clinical attention</p><h2 class="mt-1 text-lg font-semibold text-ink-950">Refill queue</h2><div class="mt-5 flex items-end justify-between"><span class="text-sm text-slate-600">Overdue</span><span class="text-3xl font-semibold text-red-700">{{ $summary['attention']['refills_overdue'] }}</span></div><div class="mt-3 flex items-end justify-between"><span class="text-sm text-slate-600">Due soon</span><span class="text-2xl font-semibold text-alert-700">{{ $summary['attention']['refills_due'] }}</span></div><a href="{{ route('prescription-refills.index') }}" class="btn-secondary mt-5">Review Refills</a></div><div class="surface-panel p-5"><p class="section-kicker">Cash control</p><h2 class="mt-1 text-lg font-semibold text-ink-950">Drawer readiness</h2><p class="mt-5 text-3xl font-semibold {{ $summary['attention']['open_cash_shifts'] ? 'text-medical-700' : 'text-alert-700' }}">{{ $summary['attention']['open_cash_shifts'] ? 'Open' : 'Not Open' }}</p><p class="mt-2 text-sm text-slate-600">{{ $summary['attention']['open_cash_shifts'] }} active drawer shift(s) on this workstation.</p><a href="{{ route('cash-drawer.index') }}" class="btn-secondary mt-5">Open Cash Drawer</a></div><div class="surface-panel p-5"><p class="section-kicker">System controls</p><h2 class="mt-1 text-lg font-semibold text-ink-950">Resilience and reports</h2><div class="mt-5 flex flex-wrap gap-2"><a href="{{ route('reports.index') }}" class="btn-secondary">Reports</a><a href="{{ route('reports.gst.index') }}" class="btn-secondary">GST Reports</a>@if (auth()->user()?->hasPermission('settings.manage'))<a href="{{ route('backups.index') }}" class="btn-secondary">Backups</a>@endif<a href="{{ route('status') }}" class="btn-secondary">System Status</a></div></div></section>
+        </div>
     </x-app-shell>
 </x-layouts.app>

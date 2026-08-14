@@ -3,6 +3,9 @@
         <a href="{{ route('purchase-invoices.index') }}" class="btn-primary">
             Receive Stock
         </a>
+        @if (auth()->user()?->hasPermission('inventory.adjust'))
+            <a href="{{ route('inventory.adjustments.index') }}" class="btn-secondary">Stock Adjustments</a>
+        @endif
     </x-slot>
 
     <div class="space-y-5">

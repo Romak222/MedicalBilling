@@ -11,6 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -33,9 +35,18 @@ class AuthenticatedSessionController extends Controller
 
         $validated = $request->validated();
         $email = strtolower($validated['email']);
+        $throttleKey = Str::transliterate(Str::lower($email).'|'.$request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, config('security.login_max_attempts'))) {
+            throw ValidationException::withMessages([
+                'email' => 'Too many login attempts. Try again later.',
+            ]);
+        }
+
         $user = User::query()->where('email', $email)->first();
 
         if (! $user || ! $user->is_active || ! Hash::check($validated['password'], $user->password)) {
+            RateLimiter::hit($throttleKey, config('security.login_decay_seconds'));
             $auditLogger->loginAttempt(
                 $user,
                 $email,
@@ -50,6 +61,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         Auth::login($user);
+        RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
         $auditLogger->loginAttempt($user, $email, true, null, $request);

@@ -1,6 +1,7 @@
 <x-app-shell page-title="Reports" section-label="Operational Reporting">
     <x-slot:actions>
         <a href="{{ route('reports.controlled-medicines.csv', ['from' => $fromDate, 'to' => $toDate]) }}" class="btn-secondary">Export Controlled Register</a>
+        <a href="{{ route('reports.gst.index') }}" class="btn-secondary">GST Reports</a>
         <a href="{{ route('status') }}" class="btn-primary">Dashboard</a>
     </x-slot>
 
