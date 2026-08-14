@@ -226,6 +226,22 @@ Implemented report coverage:
 
 These are operational reports, not statutory filings. GST reports, accounting journals, and jurisdiction-specific exports remain separate work.
 
+## Users and Roles
+
+Phase 10 now includes `/access` for owner-controlled staff access.
+
+Implemented access coverage:
+
+- Staff user creation and profile/password updates
+- Built-in least-privilege Manager, Pharmacist, and Cashier roles
+- Role assignment with permission visibility
+- User search, active/disabled filters, disable, and restore actions
+- Inactive login blocking with generic credential failure messaging
+- Owner protection against disabling the owner account or removing its fixed owner role
+- Audit events for user creation, updates, disable, restore, and role assignment
+
+Custom role authoring remains separate from the built-in role catalogue.
+
 ## Customers and Patients
 
 Phase 8 now includes `/customers` and `/patients`.

@@ -35,8 +35,14 @@ class AuthenticatedSessionController extends Controller
         $email = strtolower($validated['email']);
         $user = User::query()->where('email', $email)->first();
 
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            $auditLogger->loginAttempt($user, $email, false, 'invalid_credentials', $request);
+        if (! $user || ! $user->is_active || ! Hash::check($validated['password'], $user->password)) {
+            $auditLogger->loginAttempt(
+                $user,
+                $email,
+                false,
+                $user && ! $user->is_active ? 'inactive_account' : 'invalid_credentials',
+                $request
+            );
 
             throw ValidationException::withMessages([
                 'email' => 'The provided credentials could not be verified.',

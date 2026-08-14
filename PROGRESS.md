@@ -198,10 +198,16 @@
 - Added protected `/reports` workspace with date-bounded sales, returns, inventory expiry, controlled-medicine, refill, and cash-drawer summaries.
 - Added date-bounded controlled-medicine register CSV download with preserved event snapshots.
 - Added Phase 10 reporting and export access-control tests.
+- Continued production hardening with local user and role administration.
+- Added explicit active-user state and blocked inactive accounts during login without revealing account state.
+- Added built-in manager, pharmacist, and cashier roles with least-privilege permission sets.
+- Added protected `/access` workspace for owner-controlled staff creation, editing, role assignment, disabling, restoration, and role visibility.
+- Protected the owner account from disabling or owner-role removal and audited all access changes.
+- Added access-management and inactive-login tests.
 
 ## Current Phase
 
-Phase 10: controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation.
+Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, and access foundation.
 
 ## Pending Work
 
@@ -303,6 +309,22 @@ Phase 10 operational reporting verification completed for the Laravel app.
 
 & .\.tools\php-8.3.33\php.exe artisan test
 # Passed: 78 tests, 633 assertions.
+
+npm run build
+# Passed; Vite built production assets.
+```
+
+Phase 10 access-management verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; active-user and staff-role records applied.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 82 tests, 653 assertions.
+
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
+# Passed.
 
 npm run build
 # Passed; Vite built production assets.

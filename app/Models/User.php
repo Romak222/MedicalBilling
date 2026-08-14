@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'is_owner',
         'created_during_setup',
+        'is_active',
     ];
 
     /**
@@ -49,6 +50,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_owner' => 'boolean',
             'created_during_setup' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 

@@ -60,6 +60,7 @@ class FirstRunSetup
                 'password' => Arr::get($payload, 'owner.password'),
                 'is_owner' => true,
                 'created_during_setup' => true,
+                'is_active' => true,
             ]);
 
             $this->writeSettings($payload, $store, $owner);

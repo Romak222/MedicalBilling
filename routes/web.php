@@ -811,6 +811,23 @@ Route::get('/reports/controlled-medicines.csv', function (FirstRunSetup $setup, 
     return $reports->controlledMedicineCsv($validated['from'], $validated['to']);
 })->name('reports.controlled-medicines.csv');
 
+Route::get('/access', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(
+        auth()->user()->hasPermission('users.manage') || auth()->user()->hasPermission('roles.manage'),
+        403
+    );
+
+    return view('access.index');
+})->name('access.index');
+
 Route::get('/billing', function () {
     return redirect()->route('sales-invoices.index');
 })->name('billing.index');
