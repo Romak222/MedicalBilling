@@ -2,6 +2,9 @@
     <x-app-shell :page-title="$supplier->name" section-label="Supplier Detail">
         <x-slot:actions>
             <a href="{{ route('suppliers.index') }}" class="btn-secondary">Back to Suppliers</a>
+            @if (auth()->user()?->hasPermission('accounting.view'))
+                <a href="{{ route('suppliers.ledger', $supplier) }}" class="btn-secondary">Ledger</a>
+            @endif
             @if (auth()->user()?->hasPermission('suppliers.manage'))
                 <a href="{{ route('suppliers.edit', $supplier) }}" class="btn-primary">Edit Supplier</a>
             @endif

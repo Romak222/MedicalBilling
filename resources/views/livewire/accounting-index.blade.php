@@ -1,5 +1,6 @@
 <x-app-shell page-title="Accounting" section-label="Posted Ledger">
     <x-slot:actions>
+        <a href="{{ route('accounting.reconciliation.index') }}" class="btn-secondary">Reconcile Payments</a>
         <a href="{{ route('reports.index') }}" class="btn-secondary">Reports</a>
         <a href="{{ route('status') }}" class="btn-primary">Dashboard</a>
     </x-slot>

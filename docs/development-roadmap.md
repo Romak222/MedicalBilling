@@ -59,7 +59,7 @@ Status: complete. Catalogue master records, a protected `/products` workspace, o
 - Purchase returns
 - Supplier ledger
 
-Status: in progress. Supplier profiles, contacts, terms, balances, protected routes, CRUD screens, purchase orders, purchase order items, order status transitions, and audit hooks are implemented. Purchase invoices, receiving, purchase returns, supplier payments, supplier ledgers, and stock movements remain pending.
+Status: in progress. Supplier profiles, contacts, terms, balances, protected routes, CRUD screens, purchase orders, purchase order items, order status transitions, supplier ledger entries from finalized receipts, supplier statement pages, and audit hooks are implemented. Purchase returns and supplier payments remain pending.
 
 ## Phase 7: Batch Inventory and Stock Ledger
 
@@ -96,12 +96,12 @@ Status: in progress. Doctor masters, patient primary-doctor linkage, prescriptio
 - Reversal entries for cancellation and returns
 - Refill scheduling and repeat-dispense reminders
 
-Status: in progress. A read-only controlled-medicine register, automatic entry creation from finalized billing, reversal entry creation from bill cancellation and sales returns, a prescription refill tracker with auto-updated next-due dates, a cash-drawer shift ledger with close variance, and a protected posted accounting journal review workspace are implemented. Statutory export formats, masked-display workflows, and broader compliance reporting remain pending.
+Status: in progress. A read-only controlled-medicine register, automatic entry creation from finalized billing, reversal entry creation from bill cancellation and sales returns, a prescription refill tracker with auto-updated next-due dates, a cash-drawer shift ledger with close variance, protected customer/supplier sub-ledgers, card/UPI/mixed settlement reconciliation, and a posted accounting journal review workspace are implemented. Statutory export formats, masked-display workflows, and broader compliance reporting remain pending.
 
 ## Later Phases
 
 11. Advanced controlled-drug and compliance records
-12. Accounting and cash management: journal foundation implemented; sub-ledgers, settlement, and reconciliation pending
+12. Accounting and cash management: journal foundation, customer/supplier sub-ledgers, and settlement reconciliation implemented; supplier payments, purchase returns, and deeper controls pending
 13. GST reports
 14. Business reports and dashboards
 15. Backup and restore

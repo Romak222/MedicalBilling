@@ -1,6 +1,6 @@
 # Database Plan
 
-This document is the long-range database plan. Phase 10 has implemented first-run foundation, access-control, audit-login, catalogue master tables, supplier profile tables, purchase order tables, purchase invoice receiving tables, product batches, stock movements, POS billing tables, customer, patient, doctor, prescription, controlled-medicine register tables, prescription refill timing fields, cash-drawer shift tables, and sales return tables. GST reporting, accounting, supplier payments, broader statutory reporting, and stock adjustment workflows are still pending future phases.
+This document is the long-range database plan. Phase 10 has implemented first-run foundation, access-control, audit-login, catalogue master tables, supplier profile tables, purchase order tables, purchase invoice receiving tables, product batches, stock movements, POS billing tables, customer, patient, doctor, prescription, controlled-medicine register tables, prescription refill timing fields, cash-drawer shift tables, sales return tables, accounting journals, customer/supplier sub-ledgers, and payment reconciliations. GST reporting, supplier payments, broader statutory reporting, and stock adjustment workflows are still pending future phases.
 
 ## Database Targets
 
@@ -75,7 +75,7 @@ Phase 5 implemented `manufacturers`, `categories`, `tax_rates`, `products`, `pro
 - supplier_payments
 - supplier_ledger_entries
 
-Phase 6 implemented `suppliers`, `supplier_contacts`, `purchase_orders`, and `purchase_order_items`. Phase 7 implemented `purchase_invoices`, `purchase_invoice_items`, `product_batches`, and `stock_movements`. Phase 10 implemented the first accounting journal foundation; purchase returns, supplier payments, supplier sub-ledgers, and settlement reconciliation remain pending.
+Phase 6 implemented `suppliers`, `supplier_contacts`, `purchase_orders`, and `purchase_order_items`. Phase 7 implemented `purchase_invoices`, `purchase_invoice_items`, `product_batches`, and `stock_movements`. Phase 10 added source-linked supplier ledger entries from finalized receipts; purchase returns and supplier payments remain pending.
 
 ### Inventory
 
@@ -102,7 +102,7 @@ Phase 7-8 implemented `product_batches` and `stock_movements` for purchase recei
 - sales_return_items
 - cashier_shifts
 
-Phase 8-10 implemented `customers`, `patients`, `doctors`, `prescriptions`, `prescription_items`, `sales_invoices`, `sales_invoice_items`, `held_sales_bills`, `sales_returns`, `sales_return_items`, `cash_drawer_shifts`, and `cash_drawer_entries`. Sales invoices now support optional `customer_id`, `patient_id`, `doctor_id`, `prescription_id`, and line-level `prescription_item_id` linkage while preserving customer, patient, doctor, and prescription snapshot fields on the bill. `prescription_items` now also carry refill interval, reminder lead, last-dispensed, and next-due timing fields derived from billing history. Cash invoices and cash refunds can link to an active drawer shift. Payment-detail records, customer ledgers, and multi-counter cashier ownership remain pending.
+Phase 8-10 implemented `customers`, `patients`, `doctors`, `prescriptions`, `prescription_items`, `sales_invoices`, `sales_invoice_items`, `held_sales_bills`, `sales_returns`, `sales_return_items`, `cash_drawer_shifts`, and `cash_drawer_entries`. Sales invoices now support optional `customer_id`, `patient_id`, `doctor_id`, `prescription_id`, and line-level `prescription_item_id` linkage while preserving customer, patient, doctor, and prescription snapshot fields on the bill. `prescription_items` now also carry refill interval, reminder lead, last-dispensed, and next-due timing fields derived from billing history. Cash invoices and cash refunds can link to an active drawer shift. Customer store-credit return entries are recorded in `customer_ledger_entries`; payment-detail records and multi-counter cashier ownership remain pending.
 
 ### Regulated Records
 
@@ -124,7 +124,7 @@ Phase 10 implements `controlled_medicine_register_entries` as an automatic, bill
 - supplier_ledger_entries
 - payment_reconciliations
 
-Phase 10 implemented `accounts`, `journal_entries`, and `journal_entry_lines` with a configurable chart of accounts, balanced double-entry validation, source-document linkage, cancellation reversal entries, and automatic postings for sales, returns, and purchase receipts. Vouchers, customer and supplier sub-ledgers, payment reconciliations, and statutory tax reporting remain pending.
+Phase 10 implemented `accounts`, `journal_entries`, and `journal_entry_lines` with a configurable chart of accounts, balanced double-entry validation, source-document linkage, cancellation reversal entries, and automatic postings for sales, returns, and purchase receipts. `customer_ledger_entries`, `supplier_ledger_entries`, and `payment_reconciliations` now provide source-linked customer/supplier statements and card/UPI/mixed settlement posting. Vouchers, supplier payments, purchase returns, and statutory tax reporting remain pending.
 
 ### Audit
 

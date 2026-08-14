@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Doctor;
 use App\Models\JournalEntry;
 use App\Models\Patient;
+use App\Models\PaymentReconciliation;
 use App\Models\Prescription;
 use App\Models\PrescriptionItem;
 use App\Models\Product;
@@ -20,6 +21,7 @@ use App\Support\CashDrawerManager;
 use App\Support\CatalogueOptionRegistry;
 use App\Support\FirstRunSetup;
 use App\Support\OperationalReportService;
+use App\Support\SubledgerManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -268,6 +270,23 @@ Route::get('/suppliers/{supplier}', function (FirstRunSetup $setup, Supplier $su
     ]);
 })->name('suppliers.show');
 
+Route::get('/suppliers/{supplier}/ledger', function (FirstRunSetup $setup, Supplier $supplier, SubledgerManager $subledgers) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('ledgers.supplier', [
+        'supplier' => $supplier,
+        'statement' => $subledgers->supplierStatement($supplier),
+    ]);
+})->name('suppliers.ledger');
+
 Route::get('/suppliers/{supplier}/edit', function (FirstRunSetup $setup, Supplier $supplier) {
     if (! $setup->isComplete()) {
         return redirect()->route('setup');
@@ -325,6 +344,23 @@ Route::get('/customers/{customer}', function (FirstRunSetup $setup, Customer $cu
         'customer' => $customer->load(['patients.doctor', 'salesInvoices.patient']),
     ]);
 })->name('customers.show');
+
+Route::get('/customers/{customer}/ledger', function (FirstRunSetup $setup, Customer $customer, SubledgerManager $subledgers) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('ledgers.customer', [
+        'customer' => $customer,
+        'statement' => $subledgers->customerStatement($customer),
+    ]);
+})->name('customers.ledger');
 
 Route::get('/customers/{customer}/edit', function (FirstRunSetup $setup, Customer $customer) {
     if (! $setup->isComplete()) {
@@ -841,6 +877,36 @@ Route::get('/accounting/journal/{journalEntry}', function (FirstRunSetup $setup,
         'journalEntry' => $journalEntry->load('lines.account', 'createdBy'),
     ]);
 })->name('accounting.journal.show');
+
+Route::get('/accounting/reconciliation', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('accounting.reconciliation');
+})->name('accounting.reconciliation.index');
+
+Route::get('/accounting/reconciliation/{paymentReconciliation}', function (FirstRunSetup $setup, PaymentReconciliation $paymentReconciliation) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('accounting.reconciliation-show', [
+        'reconciliation' => $paymentReconciliation->load('journalEntry'),
+    ]);
+})->name('accounting.reconciliation.show');
 
 Route::get('/access', function (FirstRunSetup $setup) {
     if (! $setup->isComplete()) {

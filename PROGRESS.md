@@ -210,6 +210,11 @@
 - Added automatic accounting postings for finalized sales, sale cancellations, sales returns, and purchase receipts.
 - Added protected `/accounting` journal review and journal detail pages with date filters, account activity, debit/credit control totals, and balance checks.
 - Added accounting permissions, owner/manager access assignment, idempotent source posting, and accounting feature tests.
+- Added immutable customer and supplier sub-ledger entries linked to store-credit returns and finalized purchase receipts.
+- Added supplier and customer ledger detail pages with derived statements and protected access from their profile pages.
+- Added card, UPI, and mixed payment reconciliation with exact settlement-plus-fee validation and balanced bank/fee journal postings.
+- Added settlement history and detail pages with provider references, period overlap protection, and audit events.
+- Added sub-ledger and reconciliation tests covering posting, idempotency, authorization, and validation rules.
 
 ## Current Phase
 
@@ -220,7 +225,7 @@ Phase 10: controlled-medicine, refill, cash-drawer, settings, operational report
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with statutory GST exports, customer/supplier sub-ledgers, payment reconciliation, stock adjustments, or deeper regulated reporting.
+- Continue Phase 10 with purchase returns, supplier payments, statutory GST exports, stock adjustments, or deeper regulated reporting.
 
 ## Known Issues
 
@@ -611,6 +616,25 @@ npm run build
 # Passed; Vite built production assets.
 ```
 
+Phase 10 accounting ledger and reconciliation verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; sub-ledger, reconciliation, and settlement account migrations applied.
+
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar format
+# Passed; formatter completed with only repository-scoped changes retained.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 89 tests, 715 assertions.
+
+npm run build
+# Passed; Vite built production assets.
+
+& .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
+# Passed.
+```
+
 ## Important Decisions
 
 - Laravel 12 was selected instead of Laravel 13 due to the installed PHP 8.2.12 runtime.
@@ -625,9 +649,9 @@ npm run build
 - Catalogue access requires `catalogue.view`; product creation requires `catalogue.manage`.
 - Catalogue stores master data only; stock remains a future immutable movement ledger.
 - Supplier access requires `suppliers.view`; supplier creation, editing, delete/deactivation, and restoration require `suppliers.manage`.
-- Suppliers store profile/contact/terms data only; purchase documents, supplier ledger entries, stock movements, and accounting postings remain future phases.
+- Suppliers store profile/contact/terms data; supplier ledger entries are posted from finalized purchase receipts, while supplier payments and purchase returns remain future phases.
 - Purchase access requires `purchases.view`; purchase order creation, editing, sending, cancellation, and reopening require `purchases.manage`.
-- Purchase orders are request/planning documents only; purchase invoices, receiving, stock movements, supplier ledgers, payments, accounting postings, and POS remain future phases.
+- Purchase orders are request/planning documents only; purchase invoices and receiving create stock, accounting, and supplier-ledger entries. Supplier payments and purchase returns remain future phases.
 - Inventory access requires `inventory.view`; receiving finalization requires `inventory.manage`.
 - Product expiry, MFG date, MRP, purchase rate, sale rate, and stock quantity are batch-level fields, not product master fields.
 - Stock intake is recorded through immutable `stock_movements` and reflected in batch available quantities.
@@ -646,6 +670,8 @@ npm run build
 - Refill tracking reuses `prescriptions.view` and prescription-line data rather than introducing a separate editable refill document type in this phase.
 - Cash drawer reconciliation uses integer cents for arithmetic while persisting decimal money columns.
 - Cash sales and cash refunds attach to the active drawer shift; non-cash payments remain outside drawer totals.
+- Customer ledger entries currently cover return-created credits; customer payment-detail allocation remains future work.
+- Settlement reconciliation derives expected card, UPI, or mixed totals from finalized bills and requires settlement plus provider fee to match exactly.
 
 ## Commands Needed
 

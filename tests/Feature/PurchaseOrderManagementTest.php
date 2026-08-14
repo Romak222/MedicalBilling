@@ -103,7 +103,7 @@ class PurchaseOrderManagementTest extends TestCase
         $this->assertSame(0, PurchaseInvoice::query()->count());
         $this->assertSame(0, ProductBatch::query()->count());
         $this->assertSame(0, StockMovement::query()->count());
-        $this->assertFalse(Schema::hasTable('supplier_ledger_entries'));
+        $this->assertTrue(Schema::hasTable('supplier_ledger_entries'));
     }
 
     public function test_owner_can_view_edit_send_cancel_and_reopen_purchase_order(): void

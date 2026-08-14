@@ -58,6 +58,11 @@ class Supplier extends Model
         return $this->hasMany(PurchaseInvoice::class);
     }
 
+    public function ledgerEntries(): HasMany
+    {
+        return $this->hasMany(SupplierLedgerEntry::class);
+    }
+
     public function primaryContact(): HasOne
     {
         return $this->hasOne(SupplierContact::class)->where('is_primary', true);

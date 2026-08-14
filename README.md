@@ -193,7 +193,7 @@ Implemented cash-control records:
 - Dedicated `cash_drawer.view` and `cash_drawer.manage` permissions
 - Local demo shift `CD-DEMO-001` with a visible variance and manual movements
 
-Cash drawer controls do not replace customer/supplier sub-ledgers, bank reconciliation, GST reports, or hardware-specific cash-drawer triggers.
+Cash drawer controls do not replace GST reports or hardware-specific cash-drawer triggers. Customer/supplier ledgers and provider settlement reconciliation are available from their protected accounting workspaces.
 
 ## Accounting
 
@@ -204,10 +204,14 @@ Implemented accounting coverage:
 - Configurable system chart of accounts for cash, card, UPI, mixed payment, inventory, tax, supplier payable, revenue, COGS, and customer credit
 - Immutable posted journal entries and lines with balanced double-entry validation
 - Automatic postings for finalized purchase receipts, sales, sales returns, and cancellation reversals
+- Customer and supplier sub-ledger entries linked to finalized purchase receipts and store-credit returns
+- Protected supplier/customer statement pages with opening balances and immutable source-linked entries
+- Card, UPI, and mixed settlement reconciliation with exact expected amount, provider fee, bank settlement, and receivable clearing
+- Settlement history and journal-linked reconciliation detail pages with overlap protection and audit events
 - Source document linkage, reversal references, audit events, and idempotent posting protection
 - Date-bounded account activity, debit/credit control totals, journal list, and journal detail pages
 
-GST/statutory reports, supplier and customer sub-ledgers, payment settlement reconciliation, and manual accounting configuration remain future work.
+Purchase returns, supplier payments, GST/statutory reports, stock adjustments, and manual accounting configuration remain future work.
 
 ## Settings and Receipts
 
@@ -267,6 +271,7 @@ Implemented record coverage:
 - Customer contact, GSTIN, balances, loyalty, and consent fields
 - Patient contact, DOB, gender, allergies, medical notes, linked primary doctor, doctor snapshot text, and consent fields
 - Optional billing linkage from finalized sales invoices
+- Protected customer statement page with store-credit return entries
 - Local demo records for customer and patient workflow checks
 
 ## Doctors and Prescriptions
@@ -311,7 +316,7 @@ Implemented record coverage:
 - Dedicated `controlled_medicines.view` permission
 - Local demo controlled-medicine bill `SI-CM-DEMO-001`
 
-Broader statutory exports, GST reports, and customer/supplier sub-ledgers remain pending.
+Broader statutory exports and GST reports remain pending.
 
 ## NativePHP Status
 

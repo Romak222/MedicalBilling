@@ -26,6 +26,12 @@ return [
             'normal_balance' => 'debit',
             'description' => 'Payment amounts recorded as mixed tender until reconciled.',
         ],
+        '1050' => [
+            'name' => 'Bank Settlement Account',
+            'account_type' => 'asset',
+            'normal_balance' => 'debit',
+            'description' => 'Bank value received when card or UPI settlements are reconciled.',
+        ],
         '1100' => [
             'name' => 'Inventory Asset',
             'account_type' => 'asset',
@@ -67,6 +73,12 @@ return [
             'account_type' => 'expense',
             'normal_balance' => 'debit',
             'description' => 'Cost of inventory issued through sales.',
+        ],
+        '6000' => [
+            'name' => 'Payment Processing Fees',
+            'account_type' => 'expense',
+            'normal_balance' => 'debit',
+            'description' => 'Fees withheld by card or payment providers at settlement.',
         ],
     ],
 

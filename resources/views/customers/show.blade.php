@@ -2,6 +2,9 @@
     <x-app-shell :page-title="$customer->name" section-label="Customer Detail">
         <x-slot:actions>
             <a href="{{ route('customers.index') }}" class="btn-secondary">Back to Customers</a>
+            @if (auth()->user()?->hasPermission('accounting.view'))
+                <a href="{{ route('customers.ledger', $customer) }}" class="btn-secondary">Ledger</a>
+            @endif
             @if (auth()->user()?->hasPermission('customers.manage'))
                 <a href="{{ route('customers.edit', $customer) }}" class="btn-primary">Edit Customer</a>
             @endif

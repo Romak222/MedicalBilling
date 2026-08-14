@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Account;
 use App\Models\JournalEntry;
+use App\Models\PaymentReconciliation;
 use App\Models\PurchaseInvoice;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
@@ -109,7 +110,7 @@ class AccountingManager
             $this->addLine($lines, '1100', $restockCostCents, 0, 'Inventory restocked for '.$salesReturn->return_number);
             $this->addLine($lines, '5000', 0, $restockCostCents, 'Cost reversed for '.$salesReturn->return_number);
 
-            return $this->postEntry(
+            $entry = $this->postEntry(
                 $salesReturn,
                 'sales_return',
                 $salesReturn->return_date?->toDateString() ?: today()->toDateString(),
@@ -117,6 +118,10 @@ class AccountingManager
                 $lines,
                 $actor
             );
+
+            app(SubledgerManager::class)->postSalesReturn($salesReturn, $actor);
+
+            return $entry;
         });
     }
 
@@ -125,7 +130,7 @@ class AccountingManager
         return DB::transaction(function () use ($invoice, $actor): JournalEntry {
             $inventoryCents = $this->cents($invoice->subtotal_amount) - $this->cents($invoice->discount_amount);
 
-            return $this->postEntry(
+            $entry = $this->postEntry(
                 $invoice,
                 'purchase_receipt',
                 $invoice->received_on?->toDateString() ?: today()->toDateString(),
@@ -152,6 +157,53 @@ class AccountingManager
                 ],
                 $actor
             );
+
+            app(SubledgerManager::class)->postPurchaseReceipt($invoice, $entry, $actor);
+
+            return $entry;
+        });
+    }
+
+    public function postPaymentReconciliation(PaymentReconciliation $reconciliation, User $actor): JournalEntry
+    {
+        return DB::transaction(function () use ($reconciliation, $actor): JournalEntry {
+            $this->validateReconciliationAmounts($reconciliation);
+
+            $entry = $this->postEntry(
+                $reconciliation,
+                'payment_reconciliation',
+                $reconciliation->settlement_date?->toDateString() ?: today()->toDateString(),
+                'Payment settlement '.$reconciliation->reconciliation_number,
+                [
+                    [
+                        'account_code' => '1050',
+                        'debit_cents' => $this->cents($reconciliation->settled_amount),
+                        'credit_cents' => 0,
+                        'memo' => 'Settlement received '.$reconciliation->settlement_reference,
+                    ],
+                    [
+                        'account_code' => '6000',
+                        'debit_cents' => $this->cents($reconciliation->fee_amount),
+                        'credit_cents' => 0,
+                        'memo' => 'Provider fee '.$reconciliation->settlement_reference,
+                    ],
+                    [
+                        'account_code' => $this->paymentAccountCode($reconciliation->payment_method),
+                        'debit_cents' => 0,
+                        'credit_cents' => $this->cents($reconciliation->expected_amount),
+                        'memo' => 'Receivable cleared '.$reconciliation->settlement_reference,
+                    ],
+                ],
+                $actor
+            );
+
+            $reconciliation->update([
+                'status' => 'reconciled',
+                'journal_entry_id' => $entry->id,
+                'reconciled_by' => $actor->id,
+            ]);
+
+            return $entry;
         });
     }
 
@@ -265,6 +317,13 @@ class AccountingManager
         $method = strtolower(trim((string) $method));
 
         return config('accounting.payment_account_codes.'.$method, config('accounting.payment_account_codes.mixed'));
+    }
+
+    private function validateReconciliationAmounts(PaymentReconciliation $reconciliation): void
+    {
+        if ($this->cents($reconciliation->expected_amount) !== $this->cents($reconciliation->settled_amount) + $this->cents($reconciliation->fee_amount)) {
+            throw new RuntimeException('Settlement amount and fee must equal the expected payment amount.');
+        }
     }
 
     private function quantityAtCost(mixed $quantity, mixed $unitCost): int
