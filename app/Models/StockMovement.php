@@ -9,6 +9,8 @@ class StockMovement extends Model
 {
     public const TYPE_PURCHASE_RECEIVE = 'purchase_receive';
 
+    public const TYPE_PURCHASE_RETURN = 'purchase_return';
+
     public const TYPE_SALE = 'sale';
 
     public const TYPE_SALE_CANCEL = 'sale_cancel';

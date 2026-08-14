@@ -47,4 +47,4 @@ The Inventory Batches page shows batches with available quantity and expiry stat
 
 ## Boundary
 
-Phase 7 receiving only handles purchase intake. It does not implement POS sales, FEFO allocation, stock adjustment, stock verification, recall blocking, supplier payments, supplier ledgers, accounting, or GST reports yet.
+The initial Phase 7 receiving slice handled purchase intake only. The current system also consumes and reverses stock through billing and returns, and links finalized purchase receipts, purchase returns, and supplier payments to accounting and supplier ledgers. Stock adjustment, stock verification, recall blocking, and GST reports remain pending.

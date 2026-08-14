@@ -59,7 +59,7 @@ Status: complete. Catalogue master records, a protected `/products` workspace, o
 - Purchase returns
 - Supplier ledger
 
-Status: in progress. Supplier profiles, contacts, terms, balances, protected routes, CRUD screens, purchase orders, purchase order items, order status transitions, supplier ledger entries from finalized receipts, supplier statement pages, and audit hooks are implemented. Purchase returns and supplier payments remain pending.
+Status: complete for the current purchase-management foundation. Supplier profiles, contacts, terms, balances, protected routes, CRUD screens, purchase orders, purchase order items, order status transitions, purchase receiving, bounded purchase returns, supplier payment posting, source-linked supplier ledger entries, supplier statement pages, journal links, and audit hooks are implemented. Advanced stock adjustments, statutory supplier reporting, and release hardening remain later work.
 
 ## Phase 7: Batch Inventory and Stock Ledger
 
@@ -101,7 +101,7 @@ Status: in progress. A read-only controlled-medicine register, automatic entry c
 ## Later Phases
 
 11. Advanced controlled-drug and compliance records
-12. Accounting and cash management: journal foundation, customer/supplier sub-ledgers, and settlement reconciliation implemented; supplier payments, purchase returns, and deeper controls pending
+12. Accounting and cash management: journal foundation, customer/supplier sub-ledgers, settlement reconciliation, purchase returns, and supplier payments implemented; deeper controls pending
 13. GST reports
 14. Business reports and dashboards
 15. Backup and restore

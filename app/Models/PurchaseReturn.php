@@ -6,31 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PurchaseInvoice extends Model
+class PurchaseReturn extends Model
 {
-    public const STATUS_DRAFT = 'draft';
-
     public const STATUS_FINALIZED = 'finalized';
 
-    public const STATUS_CANCELLED = 'cancelled';
-
     protected $fillable = [
+        'purchase_invoice_id',
         'supplier_id',
-        'purchase_order_id',
-        'supplier_name_snapshot',
-        'invoice_number',
-        'invoice_date',
-        'received_on',
+        'return_number',
+        'return_date',
         'status',
         'subtotal_amount',
         'discount_amount',
         'tax_amount',
         'total_amount',
+        'reason',
         'notes',
         'finalized_at',
         'finalized_by',
-        'cancelled_at',
-        'cancelled_by',
+        'journal_entry_id',
         'created_by',
         'updated_by',
     ];
@@ -38,15 +32,18 @@ class PurchaseInvoice extends Model
     protected function casts(): array
     {
         return [
-            'invoice_date' => 'date',
-            'received_on' => 'date',
+            'return_date' => 'date',
             'subtotal_amount' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'tax_amount' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'finalized_at' => 'datetime',
-            'cancelled_at' => 'datetime',
         ];
+    }
+
+    public function purchaseInvoice(): BelongsTo
+    {
+        return $this->belongsTo(PurchaseInvoice::class);
     }
 
     public function supplier(): BelongsTo
@@ -54,18 +51,18 @@ class PurchaseInvoice extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    public function purchaseOrder(): BelongsTo
-    {
-        return $this->belongsTo(PurchaseOrder::class);
-    }
-
     public function items(): HasMany
     {
-        return $this->hasMany(PurchaseInvoiceItem::class);
+        return $this->hasMany(PurchaseReturnItem::class);
     }
 
-    public function returns(): HasMany
+    public function finalizedBy(): BelongsTo
     {
-        return $this->hasMany(PurchaseReturn::class);
+        return $this->belongsTo(User::class, 'finalized_by');
+    }
+
+    public function journalEntry(): BelongsTo
+    {
+        return $this->belongsTo(JournalEntry::class);
     }
 }

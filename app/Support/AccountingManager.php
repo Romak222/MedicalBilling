@@ -6,8 +6,10 @@ use App\Models\Account;
 use App\Models\JournalEntry;
 use App\Models\PaymentReconciliation;
 use App\Models\PurchaseInvoice;
+use App\Models\PurchaseReturn;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
+use App\Models\SupplierPayment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -207,6 +209,81 @@ class AccountingManager
         });
     }
 
+    public function postPurchaseReturn(PurchaseReturn $purchaseReturn, User $actor): JournalEntry
+    {
+        return DB::transaction(function () use ($purchaseReturn, $actor): JournalEntry {
+            $inventoryCents = $this->cents($purchaseReturn->subtotal_amount) - $this->cents($purchaseReturn->discount_amount);
+
+            $entry = $this->postEntry(
+                $purchaseReturn,
+                'purchase_return',
+                $purchaseReturn->return_date?->toDateString() ?: today()->toDateString(),
+                'Purchase return '.$purchaseReturn->return_number,
+                [
+                    [
+                        'account_code' => '2000',
+                        'debit_cents' => $this->cents($purchaseReturn->total_amount),
+                        'credit_cents' => 0,
+                        'memo' => 'Supplier payable reduced for '.$purchaseReturn->return_number,
+                    ],
+                    [
+                        'account_code' => '1200',
+                        'debit_cents' => 0,
+                        'credit_cents' => $this->cents($purchaseReturn->tax_amount),
+                        'memo' => 'Input tax reversed for '.$purchaseReturn->return_number,
+                    ],
+                    [
+                        'account_code' => '1100',
+                        'debit_cents' => 0,
+                        'credit_cents' => $inventoryCents,
+                        'memo' => 'Inventory returned to supplier for '.$purchaseReturn->return_number,
+                    ],
+                ],
+                $actor
+            );
+
+            $purchaseReturn->update(['journal_entry_id' => $entry->id]);
+            app(SubledgerManager::class)->postPurchaseReturn($purchaseReturn, $entry, $actor);
+
+            return $entry;
+        });
+    }
+
+    public function postSupplierPayment(SupplierPayment $payment, User $actor): JournalEntry
+    {
+        return DB::transaction(function () use ($payment, $actor): JournalEntry {
+            $entry = $this->postEntry(
+                $payment,
+                'supplier_payment',
+                $payment->payment_date?->toDateString() ?: today()->toDateString(),
+                'Supplier payment '.$payment->payment_number,
+                [
+                    [
+                        'account_code' => '2000',
+                        'debit_cents' => $this->cents($payment->amount),
+                        'credit_cents' => 0,
+                        'memo' => 'Supplier payable settled for '.$payment->payment_number,
+                    ],
+                    [
+                        'account_code' => $this->supplierPaymentAccountCode($payment->payment_method),
+                        'debit_cents' => 0,
+                        'credit_cents' => $this->cents($payment->amount),
+                        'memo' => 'Payment issued for '.$payment->payment_number,
+                    ],
+                ],
+                $actor
+            );
+
+            $payment->update([
+                'journal_entry_id' => $entry->id,
+                'paid_by' => $actor->id,
+            ]);
+            app(SubledgerManager::class)->postSupplierPayment($payment, $entry, $actor);
+
+            return $entry;
+        });
+    }
+
     /**
      * @param  array<int, array{account_code: string, debit_cents: int, credit_cents: int, memo: string|null}>  $lines
      */
@@ -317,6 +394,13 @@ class AccountingManager
         $method = strtolower(trim((string) $method));
 
         return config('accounting.payment_account_codes.'.$method, config('accounting.payment_account_codes.mixed'));
+    }
+
+    private function supplierPaymentAccountCode(?string $method): string
+    {
+        $method = strtolower(trim((string) $method));
+
+        return config('accounting.supplier_payment_account_codes.'.$method, config('accounting.supplier_payment_account_codes.other'));
     }
 
     private function validateReconciliationAmounts(PaymentReconciliation $reconciliation): void

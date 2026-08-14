@@ -32,6 +32,12 @@ return [
             'normal_balance' => 'debit',
             'description' => 'Bank value received when card or UPI settlements are reconciled.',
         ],
+        '1060' => [
+            'name' => 'Supplier Payment Bank Account',
+            'account_type' => 'asset',
+            'normal_balance' => 'debit',
+            'description' => 'Bank value paid to suppliers through transfers, cheques, or digital payments.',
+        ],
         '1100' => [
             'name' => 'Inventory Asset',
             'account_type' => 'asset',
@@ -88,5 +94,13 @@ return [
         'upi' => '1020',
         'mixed' => '1030',
         'store_credit' => '2020',
+    ],
+
+    'supplier_payment_account_codes' => [
+        'cash' => '1000',
+        'bank_transfer' => '1060',
+        'upi' => '1060',
+        'cheque' => '1060',
+        'other' => '1060',
     ],
 ];

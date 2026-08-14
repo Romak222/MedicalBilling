@@ -4,24 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PurchaseInvoiceItem extends Model
+class PurchaseReturnItem extends Model
 {
     protected $fillable = [
-        'purchase_invoice_id',
+        'purchase_return_id',
+        'purchase_invoice_item_id',
         'product_id',
         'product_batch_id',
         'product_name_snapshot',
         'unit_name',
         'batch_number',
-        'manufactured_on',
         'expires_on',
         'quantity',
         'free_quantity',
-        'mrp',
         'purchase_rate',
-        'sale_rate',
         'discount_amount',
         'tax_rate_percent',
         'line_subtotal',
@@ -33,13 +30,10 @@ class PurchaseInvoiceItem extends Model
     protected function casts(): array
     {
         return [
-            'manufactured_on' => 'date',
             'expires_on' => 'date',
             'quantity' => 'decimal:6',
             'free_quantity' => 'decimal:6',
-            'mrp' => 'decimal:2',
             'purchase_rate' => 'decimal:2',
-            'sale_rate' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'tax_rate_percent' => 'decimal:2',
             'line_subtotal' => 'decimal:2',
@@ -48,9 +42,14 @@ class PurchaseInvoiceItem extends Model
         ];
     }
 
-    public function purchaseInvoice(): BelongsTo
+    public function purchaseReturn(): BelongsTo
     {
-        return $this->belongsTo(PurchaseInvoice::class);
+        return $this->belongsTo(PurchaseReturn::class);
+    }
+
+    public function purchaseInvoiceItem(): BelongsTo
+    {
+        return $this->belongsTo(PurchaseInvoiceItem::class);
     }
 
     public function product(): BelongsTo
@@ -61,10 +60,5 @@ class PurchaseInvoiceItem extends Model
     public function productBatch(): BelongsTo
     {
         return $this->belongsTo(ProductBatch::class);
-    }
-
-    public function purchaseReturnItems(): HasMany
-    {
-        return $this->hasMany(PurchaseReturnItem::class);
     }
 }

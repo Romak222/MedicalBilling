@@ -4,6 +4,7 @@
             <a href="{{ route('suppliers.index') }}" class="btn-secondary">Back to Suppliers</a>
             @if (auth()->user()?->hasPermission('accounting.view'))
                 <a href="{{ route('suppliers.ledger', $supplier) }}" class="btn-secondary">Ledger</a>
+                <a href="{{ route('supplier-payments.index', $supplier) }}" class="btn-secondary">Payments</a>
             @endif
             @if (auth()->user()?->hasPermission('suppliers.manage'))
                 <a href="{{ route('suppliers.edit', $supplier) }}" class="btn-primary">Edit Supplier</a>

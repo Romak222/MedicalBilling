@@ -10,7 +10,7 @@ return new class extends Migration
         DB::transaction(function (): void {
             $now = now();
 
-            foreach (['1050', '6000'] as $code) {
+            foreach (['1050', '1060', '6000'] as $code) {
                 $definition = config('accounting.accounts.'.$code);
 
                 DB::table('accounts')->updateOrInsert(
@@ -34,7 +34,7 @@ return new class extends Migration
     {
         DB::transaction(function (): void {
             DB::table('accounts')
-                ->whereIn('code', ['1050', '6000'])
+                ->whereIn('code', ['1050', '1060', '6000'])
                 ->whereNotExists(function ($query): void {
                     $query->select(DB::raw(1))
                         ->from('journal_entry_lines')

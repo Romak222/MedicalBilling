@@ -6,9 +6,11 @@ use App\Models\Customer;
 use App\Models\CustomerLedgerEntry;
 use App\Models\JournalEntry;
 use App\Models\PurchaseInvoice;
+use App\Models\PurchaseReturn;
 use App\Models\SalesReturn;
 use App\Models\Supplier;
 use App\Models\SupplierLedgerEntry;
+use App\Models\SupplierPayment;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -121,6 +123,108 @@ class SubledgerManager
                 'source_type' => $entry->source_type,
                 'source_id' => $entry->source_id,
                 'credit' => $entry->credit,
+            ]);
+
+            return $entry;
+        });
+    }
+
+    public function postPurchaseReturn(PurchaseReturn $purchaseReturn, JournalEntry $journalEntry, User $actor): ?SupplierLedgerEntry
+    {
+        $purchaseReturn->loadMissing('supplier');
+
+        if (! $purchaseReturn->supplier_id || ! $purchaseReturn->supplier) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($purchaseReturn, $journalEntry, $actor): SupplierLedgerEntry {
+            $existing = SupplierLedgerEntry::query()
+                ->where('source_type', $purchaseReturn::class)
+                ->where('source_id', $purchaseReturn->getKey())
+                ->where('entry_type', 'purchase_return')
+                ->first();
+
+            if ($existing) {
+                return $existing;
+            }
+
+            $entry = SupplierLedgerEntry::query()->create([
+                'supplier_id' => $purchaseReturn->supplier_id,
+                'entry_date' => $purchaseReturn->return_date?->toDateString() ?: today()->toDateString(),
+                'entry_type' => 'purchase_return',
+                'status' => 'posted',
+                'source_type' => $purchaseReturn::class,
+                'source_id' => $purchaseReturn->getKey(),
+                'debit' => $purchaseReturn->total_amount,
+                'credit' => '0.00',
+                'description' => 'Supplier credit for return '.$purchaseReturn->return_number,
+                'created_by' => $actor->id,
+            ]);
+
+            $purchaseReturn->supplier->update([
+                'outstanding_balance' => $this->formatCents(
+                    $this->cents($purchaseReturn->supplier->outstanding_balance) - $this->cents($purchaseReturn->total_amount)
+                ),
+                'updated_by' => $actor->id,
+            ]);
+
+            app(AuditLogger::class)->record('supplier_ledger.posted', $actor, $entry, [
+                'supplier_id' => $entry->supplier_id,
+                'source_type' => $entry->source_type,
+                'source_id' => $entry->source_id,
+                'journal_entry_id' => $journalEntry->id,
+                'debit' => $entry->debit,
+            ]);
+
+            return $entry;
+        });
+    }
+
+    public function postSupplierPayment(SupplierPayment $payment, JournalEntry $journalEntry, User $actor): ?SupplierLedgerEntry
+    {
+        $payment->loadMissing('supplier');
+
+        if (! $payment->supplier_id || ! $payment->supplier) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($payment, $journalEntry, $actor): SupplierLedgerEntry {
+            $existing = SupplierLedgerEntry::query()
+                ->where('source_type', $payment::class)
+                ->where('source_id', $payment->getKey())
+                ->where('entry_type', 'supplier_payment')
+                ->first();
+
+            if ($existing) {
+                return $existing;
+            }
+
+            $entry = SupplierLedgerEntry::query()->create([
+                'supplier_id' => $payment->supplier_id,
+                'entry_date' => $payment->payment_date?->toDateString() ?: today()->toDateString(),
+                'entry_type' => 'supplier_payment',
+                'status' => 'posted',
+                'source_type' => $payment::class,
+                'source_id' => $payment->getKey(),
+                'debit' => $payment->amount,
+                'credit' => '0.00',
+                'description' => 'Supplier payment '.$payment->payment_number,
+                'created_by' => $actor->id,
+            ]);
+
+            $payment->supplier->update([
+                'outstanding_balance' => $this->formatCents(
+                    $this->cents($payment->supplier->outstanding_balance) - $this->cents($payment->amount)
+                ),
+                'updated_by' => $actor->id,
+            ]);
+
+            app(AuditLogger::class)->record('supplier_ledger.posted', $actor, $entry, [
+                'supplier_id' => $entry->supplier_id,
+                'source_type' => $entry->source_type,
+                'source_id' => $entry->source_id,
+                'journal_entry_id' => $journalEntry->id,
+                'debit' => $entry->debit,
             ]);
 
             return $entry;

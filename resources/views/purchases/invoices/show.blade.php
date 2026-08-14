@@ -2,6 +2,9 @@
     <x-app-shell :page-title="$purchaseInvoice->invoice_number" section-label="Purchase Invoice Detail">
         <x-slot:actions>
             <a href="{{ route('purchase-invoices.index') }}" class="btn-secondary">Back to Receiving</a>
+            @if (auth()->user()?->hasPermission('purchases.manage') && $purchaseInvoice->status === 'finalized')
+                <a href="{{ route('purchase-returns.create', $purchaseInvoice) }}" class="btn-primary">Return Stock</a>
+            @endif
             @if (auth()->user()?->hasPermission('purchases.manage') && $purchaseInvoice->status === 'draft')
                 <a href="{{ route('purchase-invoices.edit', $purchaseInvoice) }}" class="btn-primary">Edit Invoice</a>
             @endif

@@ -7,6 +7,9 @@
         <a href="{{ route('purchase-orders.index') }}" class="btn-secondary">
             Purchase Orders
         </a>
+        <a href="{{ route('purchase-returns.index') }}" class="btn-secondary">
+            Purchase Returns
+        </a>
         @if ($canManagePurchases)
             <a href="{{ route('purchase-invoices.create') }}" class="btn-primary">
                 Add Purchase Invoice

@@ -14,9 +14,11 @@ use App\Models\PrescriptionItem;
 use App\Models\Product;
 use App\Models\PurchaseInvoice;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseReturn;
 use App\Models\SalesInvoice;
 use App\Models\SalesReturn;
 use App\Models\Supplier;
+use App\Models\SupplierPayment;
 use App\Support\CashDrawerManager;
 use App\Support\CatalogueOptionRegistry;
 use App\Support\FirstRunSetup;
@@ -286,6 +288,56 @@ Route::get('/suppliers/{supplier}/ledger', function (FirstRunSetup $setup, Suppl
         'statement' => $subledgers->supplierStatement($supplier),
     ]);
 })->name('suppliers.ledger');
+
+Route::get('/suppliers/{supplier}/payments', function (FirstRunSetup $setup, Supplier $supplier, SubledgerManager $subledgers) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+
+    return view('suppliers.payments.index', [
+        'supplier' => $supplier,
+        'statement' => $subledgers->supplierStatement($supplier),
+        'payments' => $supplier->payments()->with('journalEntry')->latest('payment_date')->latest('id')->limit(100)->get(),
+        'canManage' => auth()->user()->hasPermission('accounting.manage'),
+    ]);
+})->name('supplier-payments.index');
+
+Route::get('/suppliers/{supplier}/payments/create', function (FirstRunSetup $setup, Supplier $supplier) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.manage'), 403);
+
+    return view('suppliers.payments.form', ['supplier' => $supplier]);
+})->name('supplier-payments.create');
+
+Route::get('/suppliers/{supplier}/payments/{supplierPayment}', function (FirstRunSetup $setup, Supplier $supplier, SupplierPayment $supplierPayment) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('accounting.view'), 403);
+    abort_unless($supplierPayment->supplier_id === $supplier->id, 404);
+
+    return view('suppliers.payments.show', [
+        'payment' => $supplierPayment->load(['supplier', 'journalEntry']),
+    ]);
+})->name('supplier-payments.show');
 
 Route::get('/suppliers/{supplier}/edit', function (FirstRunSetup $setup, Supplier $supplier) {
     if (! $setup->isComplete()) {
@@ -753,6 +805,57 @@ Route::get('/purchases/invoices/{purchaseInvoice}/edit', function (FirstRunSetup
 
     return view('purchases.invoices.form', ['purchaseInvoice' => $purchaseInvoice]);
 })->name('purchase-invoices.edit');
+
+Route::get('/purchases/returns', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('purchases.view'), 403);
+
+    return view('purchases.returns.index', [
+        'returns' => PurchaseReturn::query()
+            ->with(['supplier', 'purchaseInvoice', 'items'])
+            ->latest('return_date')
+            ->latest('id')
+            ->limit(100)
+            ->get(),
+    ]);
+})->name('purchase-returns.index');
+
+Route::get('/purchases/invoices/{purchaseInvoice}/returns/create', function (FirstRunSetup $setup, PurchaseInvoice $purchaseInvoice) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('purchases.manage'), 403);
+
+    return view('purchases.returns.form', ['purchaseInvoice' => $purchaseInvoice]);
+})->name('purchase-returns.create');
+
+Route::get('/purchases/returns/{purchaseReturn}', function (FirstRunSetup $setup, PurchaseReturn $purchaseReturn) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('purchases.view'), 403);
+
+    return view('purchases.returns.show', [
+        'purchaseReturn' => $purchaseReturn->load(['supplier', 'purchaseInvoice', 'items.product', 'items.productBatch', 'journalEntry']),
+    ]);
+})->name('purchase-returns.show');
 
 Route::get('/inventory/batches', function (FirstRunSetup $setup) {
     if (! $setup->isComplete()) {

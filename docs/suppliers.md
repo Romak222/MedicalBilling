@@ -18,7 +18,7 @@ Supplier routes require first-run setup and login. Viewing supplier records requ
 
 Supplier profile fields include supplier name, supplier code, GSTIN, drug-licence number and validity date, address, phone, email, payment terms, opening balance, credit limit, outstanding balance, active status, notes, and created/updated user references.
 
-Each supplier can have contacts. The Phase 6 UI manages one primary contact so operators have an immediate person, phone, and email available before purchase workflows are introduced.
+Each supplier can have contacts. The current UI manages one primary contact and links the supplier to purchase invoices, purchase returns, supplier payments, and the protected payable statement.
 
 ## Audit Events
 
@@ -31,4 +31,11 @@ Delete actions deactivate records instead of removing rows. This preserves suppl
 
 ## Boundary
 
-The supplier foundation does not create purchase orders, purchase invoices, supplier payments, supplier ledgers, product batches, stock movements, accounting entries, or POS behavior.
+The Phase 6 supplier-directory screens do not themselves create purchase orders, purchase invoices, product batches, stock movements, or POS behavior. Current accounting workflows add these supplier-linked routes:
+
+- `/suppliers/{supplier}/ledger`
+- `/suppliers/{supplier}/payments`
+- `/suppliers/{supplier}/payments/create`
+- `/suppliers/{supplier}/payments/{supplierPayment}`
+
+Supplier statements are derived from immutable source-linked ledger entries. Finalized purchase receipts increase the payable; purchase returns and supplier payments reduce it. Financial records are posted through balanced journals and are not silently deleted.

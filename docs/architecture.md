@@ -103,7 +103,7 @@ Phase 6 adds purchase orders and purchase order items as planning/request record
 
 ## Batch Inventory Boundary
 
-Phase 7 adds purchase invoices, product batches, and purchase-receiving stock movements. Expiry belongs to product batches, not product master records. Finalizing a purchase invoice creates or updates batches and records immutable stock movement rows. Sales/POS stock consumption, stock adjustments, supplier payments, supplier ledgers, accounting entries, and GST reporting remain pending.
+Phase 7 adds purchase invoices, product batches, and purchase-receiving stock movements. Expiry belongs to product batches, not product master records. Finalizing a purchase invoice creates or updates batches and records immutable stock movement rows. The current accounting foundation also adds bounded purchase returns, supplier payments, supplier ledger entries, and journal postings. Stock adjustments and GST reporting remain pending.
 
 ## Billing Boundary
 

@@ -2,7 +2,7 @@
 
 Commercial Windows desktop pharmacy management system foundation for India-focused medical stores.
 
-This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, and accounting foundation. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving records, batch inventory records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, accounting journals, and sales return records, plus documentation for the larger product.
+This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, accounting, purchase returns, and supplier payments. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving and return records, batch inventory records, supplier payment records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, accounting journals, and sales return records, plus documentation for the larger product.
 
 ## Current Stack
 
@@ -152,6 +152,10 @@ Implemented receiving and inventory records:
 - Draft purchase invoices that can be edited or cancelled before stock is received
 - Finalize action that creates/updates batches and writes stock movement records
 - Inventory batch list with available, expiring, expired, and all filters
+- Purchase returns linked to finalized supplier invoices
+- Bounded return quantities, batch-stock checks, negative stock movements, and supplier credits
+- Supplier payment posting for cash, bank transfer, UPI, cheque, and other methods
+- Supplier payment and return detail pages with journal and ledger links
 
 Stock is not stored directly on products. Product availability is projected through batch records that are updated from stock movements.
 
@@ -211,7 +215,7 @@ Implemented accounting coverage:
 - Source document linkage, reversal references, audit events, and idempotent posting protection
 - Date-bounded account activity, debit/credit control totals, journal list, and journal detail pages
 
-Purchase returns, supplier payments, GST/statutory reports, stock adjustments, and manual accounting configuration remain future work.
+GST/statutory reports, stock adjustments, and manual accounting configuration remain future work.
 
 ## Settings and Receipts
 
@@ -362,4 +366,4 @@ Phase 2 produced an unpacked Windows app at `nativephp/electron/dist/win-unpacke
 
 ## Phase Boundary
 
-Do not start supplier payments, supplier ledger, or accounting implementation until the current Phase 10 controlled-medicine, refill, and cash-drawer foundation is accepted.
+The supplier payment, supplier ledger, and accounting foundation is now implemented. Next work is focused on statutory GST exports, stock adjustments, deeper regulated reporting, and release hardening.

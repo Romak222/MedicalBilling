@@ -215,17 +215,25 @@
 - Added card, UPI, and mixed payment reconciliation with exact settlement-plus-fee validation and balanced bank/fee journal postings.
 - Added settlement history and detail pages with provider references, period overlap protection, and audit events.
 - Added sub-ledger and reconciliation tests covering posting, idempotency, authorization, and validation rules.
+- Added purchase return and purchase return item tables with immutable source snapshots.
+- Added bounded supplier returns from finalized purchase invoices with repeated-line and current-stock protection.
+- Added negative purchase-return stock movements and transactional batch quantity updates.
+- Added supplier payable reversal journals and supplier ledger credits for value-bearing returns.
+- Added supplier payment records with cash, bank transfer, UPI, cheque, and other payment methods.
+- Added supplier payment journal postings, supplier ledger settlement entries, and idempotent source links.
+- Added protected purchase-return and supplier-payment list, create, and immutable detail pages.
+- Added purchase-return and supplier-payment authorization, workflow, accounting, stock, and audit tests.
 
 ## Current Phase
 
-Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, and accounting foundation.
+Phase 10: controlled-medicine, refill, cash-drawer, settings, operational reporting, access, accounting, purchase returns, and supplier payments.
 
 ## Pending Work
 
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with purchase returns, supplier payments, statutory GST exports, stock adjustments, or deeper regulated reporting.
+- Continue Phase 10 with statutory GST exports, stock adjustments, deeper regulated reporting, and release hardening.
 
 ## Known Issues
 
@@ -635,6 +643,25 @@ npm run build
 # Passed.
 ```
 
+Phase 10 purchase returns and supplier payments verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; purchase return, supplier payment, and supplier payment account migrations applied.
+
+& .\.tools\php-8.3.33\php.exe vendor\bin\pint <targeted purchase-return and supplier-payment files>
+# Passed; targeted formatting completed.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 93 tests, 759 assertions.
+
+npm run build
+# Passed; Vite built production assets.
+
+composer validate --no-check-publish
+# Passed.
+```
+
 ## Important Decisions
 
 - Laravel 12 was selected instead of Laravel 13 due to the installed PHP 8.2.12 runtime.
@@ -649,9 +676,9 @@ npm run build
 - Catalogue access requires `catalogue.view`; product creation requires `catalogue.manage`.
 - Catalogue stores master data only; stock remains a future immutable movement ledger.
 - Supplier access requires `suppliers.view`; supplier creation, editing, delete/deactivation, and restoration require `suppliers.manage`.
-- Suppliers store profile/contact/terms data; supplier ledger entries are posted from finalized purchase receipts, while supplier payments and purchase returns remain future phases.
+- Suppliers store profile/contact/terms data; finalized purchase receipts, purchase returns, and supplier payments post source-linked supplier ledger entries.
 - Purchase access requires `purchases.view`; purchase order creation, editing, sending, cancellation, and reopening require `purchases.manage`.
-- Purchase orders are request/planning documents only; purchase invoices and receiving create stock, accounting, and supplier-ledger entries. Supplier payments and purchase returns remain future phases.
+- Purchase orders are request/planning documents only; purchase invoices and receiving create stock, accounting, and supplier-ledger entries, while returns and payments use separate immutable documents.
 - Inventory access requires `inventory.view`; receiving finalization requires `inventory.manage`.
 - Product expiry, MFG date, MRP, purchase rate, sale rate, and stock quantity are batch-level fields, not product master fields.
 - Stock intake is recorded through immutable `stock_movements` and reflected in batch available quantities.

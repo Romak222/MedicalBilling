@@ -41,3 +41,23 @@ Cancellation is a status transition. The app does not silently delete purchase o
 ## Boundary
 
 Purchase orders are planning/request documents only. They do not receive stock, create product batches, write stock movements, create purchase invoices, post supplier ledger entries, record supplier payments, or create accounting entries.
+
+## Receiving, Returns, and Payments
+
+The current purchase workflow continues through these protected routes:
+
+- `/purchases/invoices`
+- `/purchases/invoices/create`
+- `/purchases/invoices/{purchaseInvoice}`
+- `/purchases/invoices/{purchaseInvoice}/returns/create`
+- `/purchases/returns`
+- `/purchases/returns/{purchaseReturn}`
+- `/suppliers/{supplier}/payments`
+- `/suppliers/{supplier}/payments/create`
+- `/suppliers/{supplier}/payments/{supplierPayment}`
+
+Finalizing a purchase invoice creates or updates the product batch, writes an immutable purchase-receive stock movement, posts the payable and inventory/input-tax journal, and adds a supplier ledger entry.
+
+A purchase return can only originate from a finalized invoice. The service limits paid and free quantities to the remaining invoice quantities, checks current batch stock under a row lock, writes a negative purchase-return stock movement, and posts a supplier payable credit when the return has value. Zero-value free-stock returns remain stock and audit events without a financial journal.
+
+Supplier payments are immutable posted records. Cash uses the configured cash account; bank transfer, UPI, cheque, and other methods use the configured supplier-payment bank account. Each payment creates a balanced journal, reduces the supplier payable ledger, and is linked from the supplier statement and payment detail page.
