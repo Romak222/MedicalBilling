@@ -20,6 +20,12 @@ return [
             'description' => 'Change local application settings.',
             'is_sensitive' => true,
         ],
+        'reports.view' => [
+            'name' => 'View operational reports',
+            'module' => 'reports',
+            'description' => 'View sales, inventory, refill, cash, and controlled-medicine operational reports.',
+            'is_sensitive' => true,
+        ],
         'users.manage' => [
             'name' => 'Manage users',
             'module' => 'access',
@@ -187,6 +193,7 @@ return [
                 'system.status.view',
                 'setup.manage',
                 'settings.manage',
+                'reports.view',
                 'users.manage',
                 'roles.manage',
                 'audit.view',

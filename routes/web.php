@@ -18,6 +18,8 @@ use App\Models\Supplier;
 use App\Support\CashDrawerManager;
 use App\Support\CatalogueOptionRegistry;
 use App\Support\FirstRunSetup;
+use App\Support\OperationalReportService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -773,6 +775,41 @@ Route::get('/settings', function (FirstRunSetup $setup) {
 
     return view('settings.index');
 })->name('settings.index');
+
+Route::get('/reports', function (FirstRunSetup $setup) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('reports.view'), 403);
+
+    return view('reports.index');
+})->name('reports.index');
+
+Route::get('/reports/controlled-medicines.csv', function (FirstRunSetup $setup, Request $request, OperationalReportService $reports) {
+    if (! $setup->isComplete()) {
+        return redirect()->route('setup');
+    }
+
+    if (! auth()->check()) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(auth()->user()->hasPermission('reports.view'), 403);
+
+    $validated = $request->validate([
+        'from' => ['required', 'date_format:Y-m-d'],
+        'to' => ['required', 'date_format:Y-m-d'],
+    ]);
+
+    abort_if($validated['from'] > $validated['to'], 422, 'The report end date must be on or after the start date.');
+
+    return $reports->controlledMedicineCsv($validated['from'], $validated['to']);
+})->name('reports.controlled-medicines.csv');
 
 Route::get('/billing', function () {
     return redirect()->route('sales-invoices.index');

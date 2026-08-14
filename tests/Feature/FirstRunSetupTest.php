@@ -92,7 +92,7 @@ class FirstRunSetupTest extends TestCase
         $this->assertTrue($owner->hasPermission('inventory.view'));
         $this->assertTrue($owner->hasPermission('sales.view'));
         $this->assertSame(1, Role::query()->where('slug', 'owner')->count());
-        $this->assertSame(29, Permission::query()->count());
+        $this->assertSame(30, Permission::query()->count());
         $this->assertSame(1, AuditEvent::query()->where('action', 'setup.completed')->count());
         $this->assertAuthenticatedAs($owner);
     }

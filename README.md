@@ -2,7 +2,7 @@
 
 Commercial Windows desktop pharmacy management system foundation for India-focused medical stores.
 
-This repository is currently in Phase 10: controlled-medicine, refill, and cash-drawer foundation. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving records, batch inventory records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, and sales return records, plus documentation for the larger product.
+This repository is currently in Phase 10: controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation. It contains a Laravel 12 application with SQLite development storage, Blade views, Livewire, Livewire-bundled Alpine, Tailwind CSS, a protected health/status screen, NativePHP Desktop, a first-run setup wizard, local login, foundation access-control records, audit hooks, richer catalogue master records, supplier directory records, purchase order records, purchase receiving records, batch inventory records, sales billing records, customer, patient, doctor, prescription, controlled-medicine register, prescription-refill tracking, cash-drawer shift, settings, operational reports, and sales return records, plus documentation for the larger product.
 
 ## Current Stack
 
@@ -210,6 +210,21 @@ Implemented settings coverage:
 - Printable receipts use the saved store identity, paper width, and footer
 
 The receipt remains an HTML print workflow. A native Windows printer bridge and hardware discovery are still separate deployment work.
+
+## Operational Reports
+
+Phase 10 now includes `/reports` for date-bounded operational review.
+
+Implemented report coverage:
+
+- Finalized sales, cancellations, refunds, tax, discounts, payment mix, and top products
+- Available inventory, total available quantity, expired batches, and next expiring batches
+- Controlled-medicine register activity with net quantity effect and recent events
+- Current refill workload for tracked prescription lines
+- Cash drawer shifts, cash sales, cash refunds, and closed-shift variance
+- Controlled-medicine register CSV export for a selected date range
+
+These are operational reports, not statutory filings. GST reports, accounting journals, and jurisdiction-specific exports remain separate work.
 
 ## Customers and Patients
 

@@ -193,17 +193,22 @@
 - Added transactional settings updates with `settings.updated` audit events and no sensitive-value logging.
 - Connected configured store identity, receipt paper width, and receipt footer to the printable sales receipt.
 - Added Phase 10 settings and receipt configuration tests.
+- Continued Phase 10 with operational reporting and controlled-medicine CSV export.
+- Added `reports.view` permission and owner-role assignment migration.
+- Added protected `/reports` workspace with date-bounded sales, returns, inventory expiry, controlled-medicine, refill, and cash-drawer summaries.
+- Added date-bounded controlled-medicine register CSV download with preserved event snapshots.
+- Added Phase 10 reporting and export access-control tests.
 
 ## Current Phase
 
-Phase 10: controlled-medicine, refill, and cash-drawer foundation.
+Phase 10: controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation.
 
 ## Pending Work
 
 - Produce a final NSIS installer `.exe` from a clean build/reset workflow.
 - Add a proper app icon and product metadata.
 - Add application signing and secure bundle strategy before commercial distribution.
-- Continue Phase 10 with accounting linkage or deeper regulated reporting after the controlled-medicine, refill, cash-drawer, and settings foundation is accepted.
+- Continue Phase 10 with accounting linkage, statutory exports, or deeper regulated reporting after the controlled-medicine, refill, cash-drawer, settings, and operational reporting foundation is accepted.
 
 ## Known Issues
 
@@ -285,6 +290,19 @@ Phase 10 settings and receipt configuration verification completed for the Larav
 
 & .\.tools\php-8.3.33\php.exe C:\composer\composer.phar validate --strict
 # Passed.
+
+npm run build
+# Passed; Vite built production assets.
+```
+
+Phase 10 operational reporting verification completed for the Laravel app.
+
+```powershell
+& .\.tools\php-8.3.33\php.exe artisan migrate --force
+# Passed; reporting access records applied.
+
+& .\.tools\php-8.3.33\php.exe artisan test
+# Passed: 78 tests, 633 assertions.
 
 npm run build
 # Passed; Vite built production assets.
