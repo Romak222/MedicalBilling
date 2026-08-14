@@ -342,6 +342,7 @@ Phase 2 produced an unpacked Windows app at `nativephp/electron/dist/win-unpacke
 
 ## Documentation
 
+- `docs/user-manual.md`
 - `docs/architecture.md`
 - `docs/modules.md`
 - `docs/database-plan.md`
